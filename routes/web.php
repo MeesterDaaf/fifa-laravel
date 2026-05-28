@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('admin')->prefix('admin')->group(function () {
         Route::get('/', [AdminController::class, 'index']);
         Route::post('/sync', [AdminController::class, 'syncMatches']);
+        Route::post('/sync-squads', [AdminController::class, 'syncSquads']);
         Route::post('/match/{id}', [AdminController::class, 'updateMatch']);
         Route::post('/tournament', [AdminController::class, 'updateTournament']);
         Route::post('/invite/regenerate', [AdminController::class, 'regenerateInviteCode']);

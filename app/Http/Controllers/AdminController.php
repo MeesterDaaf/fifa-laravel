@@ -38,6 +38,16 @@ class AdminController extends Controller
         }
     }
 
+    public function syncSquads()
+    {
+        try {
+            $r = $this->footballApi->syncTeamsAndSquads();
+            return back()->with('success', "{$r['teams']} teams en {$r['players']} spelers gesynchroniseerd! ✅");
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
     public function updateMatch(Request $request, int $id)
     {
         $fixture = Fixture::findOrFail($id);

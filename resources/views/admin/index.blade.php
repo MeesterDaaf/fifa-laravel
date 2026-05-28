@@ -36,13 +36,22 @@
         <p class="text-gray-500 text-sm mb-4">
             Haal de laatste wedstrijden op van football-data.org. Vereist een geldige API key in .env.
         </p>
-        <form method="POST" action="/admin/sync">
-            @csrf
-            <button type="submit"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
-                🔄 Synchroniseer wedstrijden
-            </button>
-        </form>
+        <div class="flex flex-wrap gap-3">
+            <form method="POST" action="/admin/sync">
+                @csrf
+                <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
+                    🔄 Synchroniseer wedstrijden
+                </button>
+            </form>
+            <form method="POST" action="/admin/sync-squads">
+                @csrf
+                <button type="submit"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
+                    👥 Synchroniseer teams &amp; spelers
+                </button>
+            </form>
+        </div>
     </section>
 
     {{-- Toernooi resultaat --}}

@@ -3,18 +3,56 @@
 if (! function_exists('get_flag')) {
     function get_flag(string $code): string
     {
+        // FIFA-codes (TLA) zoals football-data.org ze teruggeeft → vlag-emoji.
         $flags = [
-            'NED' => '🇳🇱', 'BEL' => '🇧🇪', 'GER' => '🇩🇪', 'FRA' => '🇫🇷', 'ESP' => '🇪🇸',
-            'POR' => '🇵🇹', 'ENG' => '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'ITA' => '🇮🇹', 'ARG' => '🇦🇷', 'BRA' => '🇧🇷',
-            'USA' => '🇺🇸', 'MEX' => '🇲🇽', 'CAN' => '🇨🇦', 'MAR' => '🇲🇦', 'SEN' => '🇸🇳',
-            'GHA' => '🇬🇭', 'NGA' => '🇳🇬', 'JPN' => '🇯🇵', 'KOR' => '🇰🇷', 'AUS' => '🇦🇺',
-            'URU' => '🇺🇾', 'COL' => '🇨🇴', 'CHI' => '🇨🇱', 'ECU' => '🇪🇨', 'PER' => '🇵🇪',
-            'SUI' => '🇨🇭', 'DEN' => '🇩🇰', 'SWE' => '🇸🇪', 'NOR' => '🇳🇴', 'POL' => '🇵🇱',
-            'CRO' => '🇭🇷', 'SRB' => '🇷🇸', 'TUR' => '🇹🇷', 'GRE' => '🇬🇷', 'UKR' => '🇺🇦',
-            'IRN' => '🇮🇷', 'SAU' => '🇸🇦', 'QAT' => '🇶🇦', 'EGY' => '🇪🇬', 'TUN' => '🇹🇳',
-            'CMR' => '🇨🇲', 'CIV' => '🇨🇮', 'MLI' => '🇲🇱', 'ALG' => '🇩🇿', 'ZAM' => '🇿🇲',
-            'IRQ' => '🇮🇶', 'JOR' => '🇯🇴', 'UZB' => '🇺🇿', 'KAZ' => '🇰🇿', 'TJK' => '🇹🇯',
-            'NZL' => '🇳🇿', 'FIJ' => '🇫🇯', 'PNG' => '🇵🇬', 'VAN' => '🇻🇺',
+            'ALG' => '🇩🇿', // Algeria
+            'ARG' => '🇦🇷', // Argentina
+            'AUS' => '🇦🇺', // Australia
+            'AUT' => '🇦🇹', // Austria
+            'BEL' => '🇧🇪', // Belgium
+            'BIH' => '🇧🇦', // Bosnia-Herzegovina
+            'BRA' => '🇧🇷', // Brazil
+            'CAN' => '🇨🇦', // Canada
+            'CIV' => '🇨🇮', // Ivory Coast
+            'COD' => '🇨🇩', // Congo DR
+            'COL' => '🇨🇴', // Colombia
+            'CPV' => '🇨🇻', // Cape Verde Islands
+            'CRO' => '🇭🇷', // Croatia
+            'CUW' => '🇨🇼', // Curaçao
+            'CZE' => '🇨🇿', // Czechia
+            'ECU' => '🇪🇨', // Ecuador
+            'EGY' => '🇪🇬', // Egypt
+            'ENG' => '🏴󠁧󠁢󠁥󠁮󠁧󠁿', // England
+            'ESP' => '🇪🇸', // Spain
+            'FRA' => '🇫🇷', // France
+            'GER' => '🇩🇪', // Germany
+            'GHA' => '🇬🇭', // Ghana
+            'HAI' => '🇭🇹', // Haiti
+            'IRN' => '🇮🇷', // Iran
+            'IRQ' => '🇮🇶', // Iraq
+            'JOR' => '🇯🇴', // Jordan
+            'JPN' => '🇯🇵', // Japan
+            'KOR' => '🇰🇷', // South Korea
+            'KSA' => '🇸🇦', // Saudi Arabia
+            'MAR' => '🇲🇦', // Morocco
+            'MEX' => '🇲🇽', // Mexico
+            'NED' => '🇳🇱', // Netherlands
+            'NOR' => '🇳🇴', // Norway
+            'NZL' => '🇳🇿', // New Zealand
+            'PAN' => '🇵🇦', // Panama
+            'PAR' => '🇵🇾', // Paraguay
+            'POR' => '🇵🇹', // Portugal
+            'QAT' => '🇶🇦', // Qatar
+            'RSA' => '🇿🇦', // South Africa
+            'SCO' => '🏴󠁧󠁢󠁳󠁣󠁴󠁿', // Scotland
+            'SEN' => '🇸🇳', // Senegal
+            'SUI' => '🇨🇭', // Switzerland
+            'SWE' => '🇸🇪', // Sweden
+            'TUN' => '🇹🇳', // Tunisia
+            'TUR' => '🇹🇷', // Turkey
+            'URY' => '🇺🇾', // Uruguay
+            'USA' => '🇺🇸', // United States
+            'UZB' => '🇺🇿', // Uzbekistan
         ];
         return $flags[$code] ?? '🏳️';
     }

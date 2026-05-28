@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Team;
 use App\Models\TournamentPrediction;
 use App\Models\TournamentResult;
 use Illuminate\Http\Request;
 
 class ToernooiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
 
@@ -18,7 +19,31 @@ class ToernooiController extends Controller
             ->orderBy('top_scorer')
             ->get();
 
-        return view('toernooi.index', compact('myPrediction', 'tournamentResult', 'allPredictions'));
+        // Landen voor de picker (alleen die met spelers).
+        $teams = Team::has('players')->orderBy('name')->get();
+
+        // Geselecteerd land + squad (gesorteerd: aanvallers eerst).
+        $selectedTeam = null;
+        $squad = collect();
+        if ($request->filled('team')) {
+            $selectedTeam = Team::where('tla', $request->query('team'))
+                ->orWhere('id', $request->query('team'))
+                ->first();
+
+            if ($selectedTeam) {
+                $squad = $selectedTeam->players
+                    ->sortBy([
+                        fn ($a, $b) => $a->positionRank() <=> $b->positionRank(),
+                        fn ($a, $b) => strcmp($a->name, $b->name),
+                    ])
+                    ->groupBy(fn ($p) => $p->positionGroup());
+            }
+        }
+
+        return view('toernooi.index', compact(
+            'myPrediction', 'tournamentResult', 'allPredictions',
+            'teams', 'selectedTeam', 'squad'
+        ));
     }
 
     public function store(Request $request)
@@ -32,6 +57,6 @@ class ToernooiController extends Controller
             $data
         );
 
-        return redirect('/toernooi')->with('success', 'Toernooi voorspelling opgeslagen! ✅');
+        return redirect('/toernooi')->with('success', 'Topscorer-voorspelling opgeslagen! ✅');
     }
 }

@@ -3,11 +3,64 @@
 namespace App\Services;
 
 use App\Models\Fixture;
+use App\Models\Player;
+use App\Models\Team;
 use Illuminate\Support\Facades\Http;
 
 class FootballApiService
 {
     private string $baseUrl = 'https://api.football-data.org/v4';
+
+    /**
+     * Haalt alle deelnemende teams + spelerslijsten op in één API-call
+     * en slaat ze op. Geeft het aantal gesynchroniseerde spelers terug.
+     */
+    public function syncTeamsAndSquads(): array
+    {
+        $apiKey = config('services.football_api.key', '');
+        $competitionId = config('services.football_api.competition_id', 'WC');
+
+        $response = Http::withHeaders(['X-Auth-Token' => $apiKey])
+            ->get("{$this->baseUrl}/competitions/{$competitionId}/teams");
+
+        if (! $response->ok()) {
+            throw new \Exception("Football API fout: {$response->status()} {$response->reason()}");
+        }
+
+        $teams = $response->json('teams', []);
+        $teamCount = 0;
+        $playerCount = 0;
+
+        foreach ($teams as $team) {
+            Team::updateOrCreate(
+                ['id' => $team['id']],
+                [
+                    'tla'        => $team['tla'] ?? null,
+                    'name'       => $team['name'],
+                    'short_name' => $team['shortName'] ?? null,
+                    'crest'      => $team['crest'] ?? null,
+                    'area_name'  => $team['area']['name'] ?? null,
+                ]
+            );
+            $teamCount++;
+
+            foreach ($team['squad'] ?? [] as $player) {
+                Player::updateOrCreate(
+                    ['id' => $player['id']],
+                    [
+                        'team_id'       => $team['id'],
+                        'name'          => $player['name'],
+                        'position'      => $player['position'] ?? null,
+                        'nationality'   => $player['nationality'] ?? null,
+                        'date_of_birth' => $player['dateOfBirth'] ?? null,
+                    ]
+                );
+                $playerCount++;
+            }
+        }
+
+        return ['teams' => $teamCount, 'players' => $playerCount];
+    }
 
     public function syncMatches(): int
     {
