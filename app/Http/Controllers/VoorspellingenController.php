@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Fixture;
 use App\Models\Prediction;
+use App\Services\ProbabilityService;
 use Illuminate\Http\Request;
 
 class VoorspellingenController extends Controller
 {
+    public function __construct(private ProbabilityService $probability) {}
+
     public function index()
     {
         $user = auth()->user();
@@ -39,7 +42,9 @@ class VoorspellingenController extends Controller
                 ->get()
             : collect();
 
-        return view('voorspellingen.show', compact('fixture', 'myPrediction', 'allPredictions'));
+        $probability = $this->probability->forFixture($fixture);
+
+        return view('voorspellingen.show', compact('fixture', 'myPrediction', 'allPredictions', 'probability'));
     }
 
     public function store(Request $request, int $id)

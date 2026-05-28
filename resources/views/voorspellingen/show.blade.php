@@ -52,6 +52,36 @@
         @endif
     </div>
 
+    {{-- Winkans (Elo-model) --}}
+    @if($probability['known'])
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold text-gray-700 text-sm">📊 Winkans</h3>
+                <span class="text-xs text-gray-400">Schatting o.b.v. Elo-rating</span>
+            </div>
+
+            <div class="flex items-center justify-between text-sm font-semibold mb-2">
+                <span class="text-green-700">{{ $fixture->home_team_code }} {{ $probability['home'] }}%</span>
+                <span class="text-gray-500">Gelijk {{ $probability['draw'] }}%</span>
+                <span class="text-blue-700">{{ $probability['away'] }}% {{ $fixture->away_team_code }}</span>
+            </div>
+
+            <div class="flex h-3 rounded-full overflow-hidden bg-gray-100">
+                <div class="bg-green-500" style="width: {{ $probability['home'] }}%"></div>
+                <div class="bg-gray-300" style="width: {{ $probability['draw'] }}%"></div>
+                <div class="bg-blue-500" style="width: {{ $probability['away'] }}%"></div>
+            </div>
+
+            <p class="text-xs text-gray-400 mt-3">
+                Let op: dit is een statistische schatting, geen garantie. Gebruik 'm als hulpmiddel bij je voorspelling.
+            </p>
+        </div>
+    @else
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 mb-6 text-center text-sm text-gray-400">
+            📊 Winkans nog niet beschikbaar — team(s) nog niet bekend
+        </div>
+    @endif
+
     {{-- Puntensysteem --}}
     <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6 text-sm text-blue-800">
         <p class="font-semibold mb-1">🎯 Puntensysteem</p>
