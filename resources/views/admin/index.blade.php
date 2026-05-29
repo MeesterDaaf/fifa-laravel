@@ -54,6 +54,23 @@
         </div>
     </section>
 
+    {{-- Herinneringen --}}
+    <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-2">✉️ Herinneringen</h2>
+        <p class="text-gray-500 text-sm mb-4">
+            Stuur een e-mail naar iedereen die de wedstrijden van <strong>morgen</strong> nog niet heeft voorspeld.
+            Dit gebeurt ook automatisch elke dag om 18:00 (via cron).
+        </p>
+        <form method="POST" action="/admin/send-reminders"
+            onsubmit="return confirm('Herinneringen versturen voor de wedstrijden van morgen?');">
+            @csrf
+            <button type="submit"
+                class="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
+                ✉️ Stuur herinneringen voor morgen
+            </button>
+        </form>
+    </section>
+
     {{-- Deelnemers beheren --}}
     <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
         <h2 class="text-lg font-semibold text-gray-800 mb-4">👤 Deelnemers beheren ({{ $users->count() }})</h2>
@@ -80,6 +97,14 @@
                         <span class="text-xs text-gray-400 shrink-0" title="De laatste beheerder kan niet gewijzigd worden">🔒 laatste admin</span>
                     @else
                         <div class="flex items-center gap-2 shrink-0">
+                            {{-- Herinnering sturen --}}
+                            <form method="POST" action="/admin/users/{{ $u->id }}/remind">
+                                @csrf
+                                <button type="submit" title="Stuur een herinnering voor morgen"
+                                    class="text-xs text-amber-600 hover:text-amber-800 border border-amber-200 hover:border-amber-400 rounded-lg px-3 py-1.5 transition-colors whitespace-nowrap">
+                                    ✉️ Herinner
+                                </button>
+                            </form>
                             {{-- Promoten / intrekken --}}
                             <form method="POST" action="/admin/users/{{ $u->id }}/toggle-admin">
                                 @csrf

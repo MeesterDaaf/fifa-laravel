@@ -140,6 +140,27 @@ if (! function_exists('format_date')) {
     }
 }
 
+if (! function_exists('format_day')) {
+    /** Nederlandse datum zonder tijd, bijv. "donderdag 11 juni". */
+    function format_day(\Carbon\Carbon|string $date): string
+    {
+        $d = $date instanceof \Carbon\Carbon ? $date : \Carbon\Carbon::parse($date);
+        $days = [
+            'Monday' => 'maandag', 'Tuesday' => 'dinsdag', 'Wednesday' => 'woensdag',
+            'Thursday' => 'donderdag', 'Friday' => 'vrijdag', 'Saturday' => 'zaterdag', 'Sunday' => 'zondag',
+        ];
+        $months = [
+            'January' => 'januari', 'February' => 'februari', 'March' => 'maart',
+            'April' => 'april', 'May' => 'mei', 'June' => 'juni', 'July' => 'juli',
+            'August' => 'augustus', 'September' => 'september', 'October' => 'oktober',
+            'November' => 'november', 'December' => 'december',
+        ];
+        $day = $days[$d->format('l')] ?? strtolower($d->format('l'));
+        $month = $months[$d->format('F')] ?? strtolower($d->format('F'));
+        return "{$day} {$d->format('j')} {$month}";
+    }
+}
+
 if (! function_exists('format_date_short')) {
     function format_date_short(\Carbon\Carbon|string $date): string
     {

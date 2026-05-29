@@ -100,6 +100,28 @@ class AdminController extends Controller
         return back()->with('success', 'Uitnodigingscode vernieuwd! ✅');
     }
 
+    public function sendReminders(\App\Services\ReminderService $reminders)
+    {
+        $date = now()->addDay();
+        $sent = $reminders->sendForDate($date);
+
+        if ($sent === 0) {
+            return back()->with('error', "Geen herinneringen verstuurd — geen open wedstrijden op {format_day($date)} of iedereen heeft al voorspeld.");
+        }
+
+        return back()->with('success', "{$sent} herinnering(en) verstuurd voor {format_day($date)}. ✅");
+    }
+
+    public function remindUser(User $user, \App\Services\ReminderService $reminders)
+    {
+        $date = now()->addDay();
+        $ok = $reminders->sendForUser($user, $date);
+
+        return $ok
+            ? back()->with('success', "Herinnering verstuurd naar {$user->name}. ✅")
+            : back()->with('error', "Geen herinnering verstuurd — {$user->name} heeft alle wedstrijden van morgen al voorspeld (of er zijn er geen).");
+    }
+
     public function toggleAdmin(User $user)
     {
         if ($user->id === auth()->id()) {
