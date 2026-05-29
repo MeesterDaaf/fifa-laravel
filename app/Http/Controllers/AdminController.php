@@ -100,6 +100,26 @@ class AdminController extends Controller
         return back()->with('success', 'Uitnodigingscode vernieuwd! ✅');
     }
 
+    public function toggleAdmin(User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Je kunt je eigen beheerdersrol niet wijzigen.');
+        }
+
+        if ($user->is_admin && $user->isLastAdmin()) {
+            return back()->with('error', 'Dit is de laatste beheerder; rechten kunnen niet ingetrokken worden.');
+        }
+
+        $user->is_admin = ! $user->is_admin;
+        $user->save();
+
+        $msg = $user->is_admin
+            ? "{$user->name} is nu beheerder."
+            : "Beheerdersrechten van {$user->name} zijn ingetrokken.";
+
+        return back()->with('success', $msg);
+    }
+
     public function deleteUser(User $user)
     {
         if ($user->id === auth()->id()) {

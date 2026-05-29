@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/match/{id}', [AdminController::class, 'updateMatch']);
         Route::post('/tournament', [AdminController::class, 'updateTournament']);
         Route::post('/invite/regenerate', [AdminController::class, 'regenerateInviteCode']);
+        Route::post('/users/{user}/toggle-admin', [AdminController::class, 'toggleAdmin']);
         Route::delete('/users/{user}', [AdminController::class, 'deleteUser']);
     });
 });

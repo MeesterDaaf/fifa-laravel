@@ -75,19 +75,37 @@
                         <span class="text-xs text-gray-400">{{ $u->email }}</span>
                     </div>
                     @if($u->id === auth()->id())
-                        <span class="text-xs text-gray-300">—</span>
+                        <span class="text-xs text-gray-300 shrink-0">jij</span>
                     @elseif($isLastAdmin)
-                        <span class="text-xs text-gray-400" title="De laatste beheerder kan niet verwijderd worden">🔒 laatste admin</span>
+                        <span class="text-xs text-gray-400 shrink-0" title="De laatste beheerder kan niet gewijzigd worden">🔒 laatste admin</span>
                     @else
-                        <form method="POST" action="/admin/users/{{ $u->id }}"
-                            onsubmit="return confirm('Deelnemer {{ $u->name }} en al hun voorspellingen verwijderen?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit"
-                                class="text-xs text-red-500 hover:text-red-700 border border-red-200 hover:border-red-400 rounded-lg px-3 py-1.5 transition-colors">
-                                Verwijderen
-                            </button>
-                        </form>
+                        <div class="flex items-center gap-2 shrink-0">
+                            {{-- Promoten / intrekken --}}
+                            <form method="POST" action="/admin/users/{{ $u->id }}/toggle-admin">
+                                @csrf
+                                @if($u->is_admin)
+                                    <button type="submit"
+                                        class="text-xs text-amber-600 hover:text-amber-800 border border-amber-200 hover:border-amber-400 rounded-lg px-3 py-1.5 transition-colors whitespace-nowrap">
+                                        Admin intrekken
+                                    </button>
+                                @else
+                                    <button type="submit"
+                                        class="text-xs text-green-600 hover:text-green-800 border border-green-200 hover:border-green-400 rounded-lg px-3 py-1.5 transition-colors whitespace-nowrap">
+                                        Maak admin
+                                    </button>
+                                @endif
+                            </form>
+                            {{-- Verwijderen --}}
+                            <form method="POST" action="/admin/users/{{ $u->id }}"
+                                onsubmit="return confirm('Deelnemer {{ $u->name }} en al hun voorspellingen verwijderen?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    class="text-xs text-red-500 hover:text-red-700 border border-red-200 hover:border-red-400 rounded-lg px-3 py-1.5 transition-colors">
+                                    Verwijderen
+                                </button>
+                            </form>
+                        </div>
                     @endif
                 </div>
             @endforeach
