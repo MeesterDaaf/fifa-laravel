@@ -36,4 +36,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(TournamentPrediction::class);
     }
+
+    /** Is dit de enige (laatste) beheerder? */
+    public function isLastAdmin(): bool
+    {
+        return $this->is_admin && static::where('is_admin', true)->count() <= 1;
+    }
 }

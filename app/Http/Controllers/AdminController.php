@@ -106,6 +106,10 @@ class AdminController extends Controller
             return back()->with('error', 'Je kunt je eigen account hier niet verwijderen.');
         }
 
+        if ($user->isLastAdmin()) {
+            return back()->with('error', 'Dit is de laatste beheerder en kan niet verwijderd worden.');
+        }
+
         $name = $user->name;
         $user->delete(); // voorspellingen verdwijnen mee via cascade
 

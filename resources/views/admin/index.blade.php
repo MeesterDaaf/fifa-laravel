@@ -57,8 +57,10 @@
     {{-- Deelnemers beheren --}}
     <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
         <h2 class="text-lg font-semibold text-gray-800 mb-4">👤 Deelnemers beheren ({{ $users->count() }})</h2>
+        @php $adminCount = $users->where('is_admin', true)->count(); @endphp
         <div class="divide-y divide-gray-50">
             @foreach($users as $u)
+                @php $isLastAdmin = $u->is_admin && $adminCount <= 1; @endphp
                 <div class="flex items-center gap-3 py-2.5">
                     <div class="flex-1 min-w-0">
                         <span class="text-sm font-medium text-gray-800 truncate block">
@@ -72,7 +74,11 @@
                         </span>
                         <span class="text-xs text-gray-400">{{ $u->email }}</span>
                     </div>
-                    @if($u->id !== auth()->id())
+                    @if($u->id === auth()->id())
+                        <span class="text-xs text-gray-300">—</span>
+                    @elseif($isLastAdmin)
+                        <span class="text-xs text-gray-400" title="De laatste beheerder kan niet verwijderd worden">🔒 laatste admin</span>
+                    @else
                         <form method="POST" action="/admin/users/{{ $u->id }}"
                             onsubmit="return confirm('Deelnemer {{ $u->name }} en al hun voorspellingen verwijderen?');">
                             @csrf
@@ -82,8 +88,6 @@
                                 Verwijderen
                             </button>
                         </form>
-                    @else
-                        <span class="text-xs text-gray-300">—</span>
                     @endif
                 </div>
             @endforeach

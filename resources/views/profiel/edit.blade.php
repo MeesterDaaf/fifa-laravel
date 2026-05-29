@@ -58,33 +58,42 @@
     </div>
 
     {{-- Gevarenzone --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-red-200 p-6">
-        <h2 class="font-semibold text-red-700 mb-2">⚠️ Account verwijderen</h2>
-        <p class="text-sm text-gray-600 mb-4">
-            Dit verwijdert je account én al je voorspellingen definitief. Dit kan niet ongedaan worden gemaakt.
-        </p>
+    @if($user->isLastAdmin())
+        <div class="bg-amber-50 rounded-2xl border border-amber-200 p-6">
+            <h2 class="font-semibold text-amber-800 mb-2">🔒 Account verwijderen niet mogelijk</h2>
+            <p class="text-sm text-amber-700">
+                Je bent de laatste beheerder. Maak eerst een andere deelnemer beheerder voordat je je eigen account kunt verwijderen.
+            </p>
+        </div>
+    @else
+        <div class="bg-white rounded-2xl shadow-sm border border-red-200 p-6">
+            <h2 class="font-semibold text-red-700 mb-2">⚠️ Account verwijderen</h2>
+            <p class="text-sm text-gray-600 mb-4">
+                Dit verwijdert je account én al je voorspellingen definitief. Dit kan niet ongedaan worden gemaakt.
+            </p>
 
-        @if($errors->has('password'))
-            <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-4 text-sm">
-                {{ $errors->first('password') }}
-            </div>
-        @endif
+            @if($errors->has('password'))
+                <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-4 text-sm">
+                    {{ $errors->first('password') }}
+                </div>
+            @endif
 
-        <form method="POST" action="/profiel" onsubmit="return confirm('Weet je zeker dat je je account en al je voorspellingen permanent wilt verwijderen?');">
-            @csrf
-            @method('DELETE')
-            <div class="mb-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Bevestig met je wachtwoord</label>
-                <input type="password" name="password" required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500"
-                    placeholder="Je huidige wachtwoord">
-            </div>
-            <button type="submit"
-                class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-xl transition-colors">
-                🗑️ Account definitief verwijderen
-            </button>
-        </form>
-    </div>
+            <form method="POST" action="/profiel" onsubmit="return confirm('Weet je zeker dat je je account en al je voorspellingen permanent wilt verwijderen?');">
+                @csrf
+                @method('DELETE')
+                <div class="mb-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Bevestig met je wachtwoord</label>
+                    <input type="password" name="password" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500"
+                        placeholder="Je huidige wachtwoord">
+                </div>
+                <button type="submit"
+                    class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-xl transition-colors">
+                    🗑️ Account definitief verwijderen
+                </button>
+            </form>
+        </div>
+    @endif
 
 </div>
 @endsection

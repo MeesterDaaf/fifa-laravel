@@ -42,6 +42,10 @@ class ProfileController extends Controller
 
         $user = auth()->user();
 
+        if ($user->isLastAdmin()) {
+            return back()->with('error', 'Je bent de laatste beheerder. Maak eerst een andere beheerder aan voordat je je account verwijdert.');
+        }
+
         Auth::logout();
         $user->delete(); // voorspellingen verdwijnen mee via cascade
 
