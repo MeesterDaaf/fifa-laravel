@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Fixture;
 use App\Models\Prediction;
+use App\Models\TournamentPrediction;
 use App\Services\ScoringService;
 
 class HomeController extends Controller
@@ -21,6 +22,25 @@ class HomeController extends Controller
             ->limit(5)
             ->get();
 
+        // Voortgang wedstrijd-voorspellingen (alleen nog open wedstrijden tellen mee).
+        $openFixtureIds = Fixture::where('status', 'SCHEDULED')
+            ->where('scheduled_at', '>=', $now)
+            ->pluck('id');
+        $openCount = $openFixtureIds->count();
+        $predictedCount = Prediction::where('user_id', $user->id)
+            ->whereIn('fixture_id', $openFixtureIds)
+            ->count();
+
+        // Voortgang toernooi-voorspellingen (4 onderdelen).
+        $tournament = TournamentPrediction::where('user_id', $user->id)->first();
+        $tournamentStatus = [
+            'champion'   => filled($tournament?->champion),
+            'top_scorer' => filled($tournament?->top_scorer),
+            'yellow'     => $tournament?->total_yellow_cards !== null,
+            'red'        => $tournament?->total_red_cards !== null,
+        ];
+        $tournamentDone = count(array_filter($tournamentStatus));
+
         $recent = Fixture::where('status', 'FINISHED')
             ->orderByDesc('scheduled_at')
             ->limit(5)
@@ -33,6 +53,9 @@ class HomeController extends Controller
 
         $leaderboard = array_slice($this->scoring->getLeaderboard(), 0, 5);
 
-        return view('home.index', compact('upcoming', 'recent', 'myPredIds', 'leaderboard'));
+        return view('home.index', compact(
+            'upcoming', 'recent', 'myPredIds', 'leaderboard',
+            'openCount', 'predictedCount', 'tournamentStatus', 'tournamentDone'
+        ));
     }
 }

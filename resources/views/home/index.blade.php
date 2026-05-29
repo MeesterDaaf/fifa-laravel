@@ -17,6 +17,78 @@
         </div>
     </div>
 
+    {{-- Voortgang: maak duidelijk dat je BEIDE moet doen --}}
+    @php
+        $matchesDone = $openCount > 0 && $predictedCount >= $openCount;
+        $tournamentComplete = $tournamentDone === 4;
+        $allDone = ($openCount === 0 || $matchesDone) && $tournamentComplete;
+    @endphp
+
+    <div class="rounded-2xl border p-5 {{ $allDone ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200' }}">
+        <div class="flex items-center gap-2 mb-4">
+            <span class="text-xl">{{ $allDone ? '✅' : '📋' }}</span>
+            <h2 class="font-bold text-gray-800">
+                {{ $allDone ? 'Je bent helemaal bij — alles voorspeld!' : 'Maak je voorspellingen compleet' }}
+            </h2>
+        </div>
+
+        @unless($allDone)
+            <p class="text-sm text-gray-600 mb-4">
+                Je doet mee op twee manieren: voorspel de <strong>wedstrijden</strong> én maak je <strong>toernooi-voorspellingen</strong>. Vergeet geen van beide!
+            </p>
+        @endunless
+
+        <div class="grid sm:grid-cols-2 gap-3">
+
+            {{-- Wedstrijden --}}
+            <a href="/voorspellingen" class="block bg-white rounded-xl p-4 border border-gray-100 hover:border-green-300 hover:shadow-sm transition-all">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="font-semibold text-gray-800 text-sm">⚽ Wedstrijden</span>
+                    @if($openCount === 0)
+                        <span class="text-xs text-gray-400">geen open</span>
+                    @elseif($matchesDone)
+                        <span class="text-xs font-medium text-green-600">✅ compleet</span>
+                    @else
+                        <span class="text-xs font-medium text-amber-600">{{ $openCount - $predictedCount }} te doen</span>
+                    @endif
+                </div>
+                @if($openCount > 0)
+                    <div class="flex h-2 rounded-full overflow-hidden bg-gray-100 mb-1">
+                        <div class="bg-green-500" style="width: {{ round($predictedCount / $openCount * 100) }}%"></div>
+                    </div>
+                    <p class="text-xs text-gray-500">{{ $predictedCount }} van {{ $openCount }} open wedstrijden voorspeld</p>
+                @else
+                    <p class="text-xs text-gray-500">Er staan nu geen wedstrijden open om te voorspellen.</p>
+                @endif
+            </a>
+
+            {{-- Toernooi --}}
+            <a href="/toernooi" class="block bg-white rounded-xl p-4 border border-gray-100 hover:border-green-300 hover:shadow-sm transition-all">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="font-semibold text-gray-800 text-sm">🏆 Toernooi</span>
+                    @if($tournamentComplete)
+                        <span class="text-xs font-medium text-green-600">✅ compleet</span>
+                    @else
+                        <span class="text-xs font-medium text-amber-600">{{ $tournamentDone }}/4 gedaan</span>
+                    @endif
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                    @foreach([
+                        'champion' => 'Winnaar',
+                        'top_scorer' => 'Topscorer',
+                        'yellow' => 'Gele kaarten',
+                        'red' => 'Rode kaarten',
+                    ] as $key => $label)
+                        <span class="text-xs px-2 py-0.5 rounded-full {{ $tournamentStatus[$key] ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
+                            {{ $tournamentStatus[$key] ? '✅' : '⭕' }} {{ $label }}
+                        </span>
+                    @endforeach
+                </div>
+            </a>
+
+        </div>
+    </div>
+
     <div class="grid md:grid-cols-2 gap-6">
 
         {{-- Aankomende wedstrijden --}}
