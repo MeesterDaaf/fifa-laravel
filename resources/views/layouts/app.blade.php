@@ -26,6 +26,9 @@
                         <button type="submit" class="text-sm text-gray-400 hover:text-red-500 transition-colors px-2 py-1 cursor-pointer">Uitloggen</button>
                     </form>
                 </div>
+                <div class="shrink-0">
+                    @include('partials.reminder')
+                </div>
             </div>
         </div>
     </nav>
