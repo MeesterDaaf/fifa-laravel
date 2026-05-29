@@ -25,8 +25,9 @@ class AdminController extends Controller
         $inviteCode = Setting::inviteCode();
         $baseUrl = config('app.url');
         $teams = \App\Models\Team::orderBy('name')->get();
+        $users = User::orderBy('is_admin')->orderBy('name')->get();
 
-        return view('admin.index', compact('fixtures', 'tournamentResult', 'totalUsers', 'inviteCode', 'baseUrl', 'teams'));
+        return view('admin.index', compact('fixtures', 'tournamentResult', 'totalUsers', 'inviteCode', 'baseUrl', 'teams', 'users'));
     }
 
     public function syncMatches()
@@ -97,5 +98,17 @@ class AdminController extends Controller
     {
         Setting::regenerateInviteCode();
         return back()->with('success', 'Uitnodigingscode vernieuwd! ✅');
+    }
+
+    public function deleteUser(User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Je kunt je eigen account hier niet verwijderen.');
+        }
+
+        $name = $user->name;
+        $user->delete(); // voorspellingen verdwijnen mee via cascade
+
+        return back()->with('success', "Deelnemer {$name} is verwijderd.");
     }
 }

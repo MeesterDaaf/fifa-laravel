@@ -23,6 +23,7 @@
                     @if(auth()->user()?->is_admin)
                         <a href="/admin" class="text-sm text-gray-600 hover:text-green-700 transition-colors px-2 py-1">Admin</a>
                     @endif
+                    <a href="/profiel" class="text-sm text-gray-600 hover:text-green-700 transition-colors px-2 py-1">Profiel</a>
                     <form action="/logout" method="POST" class="inline">
                         @csrf
                         <button type="submit" class="text-sm text-gray-400 hover:text-red-500 transition-colors px-2 py-1 cursor-pointer">Uitloggen</button>
@@ -36,6 +37,11 @@
 
                 {{-- Mobiele actie-iconen: admin + uitloggen --}}
                 <div class="flex sm:hidden items-center gap-1 shrink-0">
+                    <a href="/profiel" class="px-2 py-1 text-gray-600 hover:text-green-700" title="Profiel">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        </svg>
+                    </a>
                     @if(auth()->user()?->is_admin)
                         <a href="/admin" class="px-2 py-1 text-gray-600 hover:text-green-700" title="Admin">
                             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

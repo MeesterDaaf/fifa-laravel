@@ -54,6 +54,42 @@
         </div>
     </section>
 
+    {{-- Deelnemers beheren --}}
+    <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">👤 Deelnemers beheren ({{ $users->count() }})</h2>
+        <div class="divide-y divide-gray-50">
+            @foreach($users as $u)
+                <div class="flex items-center gap-3 py-2.5">
+                    <div class="flex-1 min-w-0">
+                        <span class="text-sm font-medium text-gray-800 truncate block">
+                            {{ $u->name }}
+                            @if($u->is_admin)
+                                <span class="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full ml-1">admin</span>
+                            @endif
+                            @if($u->id === auth()->id())
+                                <span class="text-green-600 text-xs ml-1">(jij)</span>
+                            @endif
+                        </span>
+                        <span class="text-xs text-gray-400">{{ $u->email }}</span>
+                    </div>
+                    @if($u->id !== auth()->id())
+                        <form method="POST" action="/admin/users/{{ $u->id }}"
+                            onsubmit="return confirm('Deelnemer {{ $u->name }} en al hun voorspellingen verwijderen?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                class="text-xs text-red-500 hover:text-red-700 border border-red-200 hover:border-red-400 rounded-lg px-3 py-1.5 transition-colors">
+                                Verwijderen
+                            </button>
+                        </form>
+                    @else
+                        <span class="text-xs text-gray-300">—</span>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+    </section>
+
     {{-- Toernooi resultaat --}}
     <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
         <h2 class="text-lg font-semibold text-gray-800 mb-1">🏆 Toernooi resultaat</h2>

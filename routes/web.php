@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DeelnemersController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RanglijstController;
 use App\Http\Controllers\ToernooiController;
 use App\Http\Controllers\VoorspellingenController;
@@ -26,6 +27,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/toernooi', [ToernooiController::class, 'store']);
     Route::get('/deelnemers', [DeelnemersController::class, 'index']);
     Route::get('/deelnemers/{user}', [DeelnemersController::class, 'show']);
+    Route::get('/profiel', [ProfileController::class, 'edit']);
+    Route::put('/profiel', [ProfileController::class, 'update']);
+    Route::delete('/profiel', [ProfileController::class, 'destroy']);
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::middleware('admin')->prefix('admin')->group(function () {
@@ -35,5 +39,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/match/{id}', [AdminController::class, 'updateMatch']);
         Route::post('/tournament', [AdminController::class, 'updateTournament']);
         Route::post('/invite/regenerate', [AdminController::class, 'regenerateInviteCode']);
+        Route::delete('/users/{user}', [AdminController::class, 'deleteUser']);
     });
 });
