@@ -108,13 +108,14 @@ class ScoringService
     {
         return User::where('is_admin', false)
             ->with(['predictions:user_id,total_points', 'tournamentPrediction:user_id,points'])
-            ->get(['id', 'name'])
+            ->get(['id', 'name', 'is_bot'])
             ->map(function ($user) {
                 $matchPoints = $user->predictions->sum('total_points');
                 $tournamentPoints = $user->tournamentPrediction?->points ?? 0;
                 return [
                     'id'               => $user->id,
                     'name'             => $user->name,
+                    'is_bot'           => $user->is_bot,
                     'matchPoints'      => $matchPoints,
                     'tournamentPoints' => $tournamentPoints,
                     'totalPoints'      => $matchPoints + $tournamentPoints,

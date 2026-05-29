@@ -12,3 +12,9 @@ Artisan::command('inspire', function () {
 Schedule::command('reminders:send')
     ->dailyAt('18:00')
     ->timezone('Europe/Amsterdam');
+
+// Laat de AI-bot elke dag om 12:00 nieuwe open wedstrijden voorspellen
+// (ruim vóór de deadline, en knock-outs zodra de teams bekend zijn).
+Schedule::command('ai:predict')
+    ->dailyAt('12:00')
+    ->timezone('Europe/Amsterdam');

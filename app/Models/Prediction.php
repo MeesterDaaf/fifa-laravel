@@ -11,7 +11,7 @@ class Prediction extends Model
         'user_id', 'fixture_id', 'home_score', 'away_score',
         'first_goal_minute',
         'points_score', 'points_goal_minute', 'total_points',
-        'calculated_at',
+        'calculated_at', 'ai_reasoning',
     ];
 
     protected $casts = [

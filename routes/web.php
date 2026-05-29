@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/tournament', [AdminController::class, 'updateTournament']);
         Route::post('/invite/regenerate', [AdminController::class, 'regenerateInviteCode']);
         Route::post('/send-reminders', [AdminController::class, 'sendReminders']);
+        Route::post('/ai-predict', [AdminController::class, 'aiPredict']);
         Route::post('/users/{user}/remind', [AdminController::class, 'remindUser']);
         Route::post('/users/{user}/toggle-admin', [AdminController::class, 'toggleAdmin']);
         Route::delete('/users/{user}', [AdminController::class, 'deleteUser']);

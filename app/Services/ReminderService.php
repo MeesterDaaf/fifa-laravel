@@ -23,7 +23,7 @@ class ReminderService
         }
 
         $sent = 0;
-        foreach (User::all() as $user) {
+        foreach (User::where('is_bot', false)->get() as $user) {
             if ($this->sendToUser($user, $matches, $date)) {
                 $sent++;
             }

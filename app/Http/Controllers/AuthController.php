@@ -22,6 +22,12 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
+        // Bot-accounts kunnen niet inloggen.
+        $candidate = \App\Models\User::where('email', $request->email)->first();
+        if ($candidate?->is_bot) {
+            return back()->withErrors(['email' => 'Dit account kan niet inloggen.'])->withInput();
+        }
+
         if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             $request->session()->regenerate();
             return redirect('/');

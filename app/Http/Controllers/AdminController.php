@@ -122,6 +122,14 @@ class AdminController extends Controller
             : back()->with('error', "Geen herinnering verstuurd — {$user->name} heeft alle wedstrijden van morgen al voorspeld (of er zijn er geen).");
     }
 
+    public function aiPredict(\App\Services\AiPredictionService $ai)
+    {
+        $r = $ai->run();
+        $tournament = $r['tournament'] ? ' Toernooivoorspelling ingevuld.' : '';
+
+        return back()->with('success', "🤖 AI-bot: {$r['matches']} wedstrijd(en) voorspeld.{$tournament} ✅");
+    }
+
     public function toggleAdmin(User $user)
     {
         if ($user->id === auth()->id()) {

@@ -4,12 +4,13 @@ Laravel-app (Blade + Tailwind) voor een WK-2026 voorspelpool: gebruikers
 voorspellen wedstrijduitslagen en toernooi-uitkomsten (winnaar, topscorer,
 totaal gele/rode kaarten) en strijden op een ranglijst.
 
-## Geplande features / roadmap
+## Features
 
-- **AI-speler** — een AI-deelnemer die meedoet en voorspellingen doet
-  (hybride: Elo/Poisson voor de cijfers + LLM voor de onderbouwing). Volledig
-  ontwerp + stappenplan staat in [`AI_player.md`](./AI_player.md). Nog niet
-  gebouwd; klaar om op te pakken.
+- **AI-speler (gebouwd)** — AI-deelnemer "🤖 Voorspel-AI" die meedoet en
+  voorspellingen doet (hybride: Elo/Poisson voor de cijfers + LLM voor de
+  onderbouwing). Draaien: `php artisan ai:predict` of de admin-knop; dagelijks
+  om 12:00 via de scheduler. LLM-onderbouwing vereist `ANTHROPIC_API_KEY`
+  (zonder key blijven de cijfers werken). Details in [`AI_player.md`](./AI_player.md).
 
 ## Goed om te weten
 

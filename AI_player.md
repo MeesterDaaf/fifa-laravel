@@ -1,7 +1,8 @@
 # AI-speler — ontwerp & stappenplan
 
-> Status: **ontwerp, nog niet gebouwd.** Opgesteld om later op te pakken.
-> Gekozen aanpak: **hybride** (statistisch model voor de cijfers + LLM voor de onderbouwing), **één** AI-speler.
+> Status: **GEBOUWD ✅** (mei 2026). Hybride (Elo/Poisson voor de cijfers + LLM voor de onderbouwing), één AI-speler.
+> Activeren: `php artisan ai:predict` (of admin-knop "🤖 Laat de AI voorspellen"); draait ook dagelijks om 12:00 via de scheduler.
+> LLM-onderbouwing werkt zodra `ANTHROPIC_API_KEY` in `.env` staat; zonder key blijven de cijfers werken (onderbouwing leeg).
 
 ## Doel
 

@@ -71,6 +71,22 @@
         </form>
     </section>
 
+    {{-- AI-bot --}}
+    <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-2">🤖 AI-speler</h2>
+        <p class="text-gray-500 text-sm mb-4">
+            Laat de AI-bot voorspellingen doen voor alle open wedstrijden (en eenmalig het toernooi).
+            Dit gebeurt ook automatisch elke dag om 12:00.
+        </p>
+        <form method="POST" action="/admin/ai-predict">
+            @csrf
+            <button type="submit"
+                class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
+                🤖 Laat de AI voorspellen
+            </button>
+        </form>
+    </section>
+
     {{-- Deelnemers beheren --}}
     <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
         <h2 class="text-lg font-semibold text-gray-800 mb-4">👤 Deelnemers beheren ({{ $users->count() }})</h2>

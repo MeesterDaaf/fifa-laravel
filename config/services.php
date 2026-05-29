@@ -28,4 +28,9 @@ return [
         'competition_id' => env('FOOTBALL_COMPETITION_ID', 'WC'),
     ],
 
+    'anthropic' => [
+        'key'   => env('ANTHROPIC_API_KEY', ''),
+        'model' => env('ANTHROPIC_MODEL', 'claude-haiku-4-5-20251001'),
+    ],
+
 ];

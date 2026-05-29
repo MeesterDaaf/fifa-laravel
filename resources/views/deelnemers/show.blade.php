@@ -34,6 +34,11 @@
                 <div class="font-bold text-gray-800">{{ $tournament?->total_red_cards ?? '—' }}</div>
             </div>
         </div>
+        @if($tournament?->ai_reasoning)
+            <p class="mt-3 text-sm text-purple-700 bg-purple-50 border border-purple-100 rounded-lg px-3 py-2 italic">
+                🤖 {{ $tournament->ai_reasoning }}
+            </p>
+        @endif
     </div>
 
     {{-- Wedstrijd-voorspellingen per fase --}}
@@ -88,6 +93,9 @@
 
                         @if($pred && $pred->first_goal_minute !== null)
                             <div class="mt-1 text-xs text-gray-400">⚽ 1e doelpunt: minuut {{ $pred->first_goal_minute }}</div>
+                        @endif
+                        @if($pred && $pred->ai_reasoning)
+                            <p class="mt-1 text-xs text-purple-700 italic">🤖 {{ $pred->ai_reasoning }}</p>
                         @endif
                     </div>
                 @endforeach
