@@ -58,6 +58,68 @@ if (! function_exists('get_flag')) {
     }
 }
 
+if (! function_exists('country_name')) {
+    /**
+     * Volledige Nederlandse landnaam bij een FIFA-code (TLA).
+     * Valt terug op de meegegeven naam (Engels uit de API) of de code zelf.
+     */
+    function country_name(?string $code, ?string $fallback = null): string
+    {
+        $names = [
+            'ALG' => 'Algerije',
+            'ARG' => 'Argentinië',
+            'AUS' => 'Australië',
+            'AUT' => 'Oostenrijk',
+            'BEL' => 'België',
+            'BIH' => 'Bosnië-Herzegovina',
+            'BRA' => 'Brazilië',
+            'CAN' => 'Canada',
+            'CIV' => 'Ivoorkust',
+            'COD' => 'DR Congo',
+            'COL' => 'Colombia',
+            'CPV' => 'Kaapverdië',
+            'CRO' => 'Kroatië',
+            'CUW' => 'Curaçao',
+            'CZE' => 'Tsjechië',
+            'ECU' => 'Ecuador',
+            'EGY' => 'Egypte',
+            'ENG' => 'Engeland',
+            'ESP' => 'Spanje',
+            'FRA' => 'Frankrijk',
+            'GER' => 'Duitsland',
+            'GHA' => 'Ghana',
+            'HAI' => 'Haïti',
+            'IRN' => 'Iran',
+            'IRQ' => 'Irak',
+            'JOR' => 'Jordanië',
+            'JPN' => 'Japan',
+            'KOR' => 'Zuid-Korea',
+            'KSA' => 'Saoedi-Arabië',
+            'MAR' => 'Marokko',
+            'MEX' => 'Mexico',
+            'NED' => 'Nederland',
+            'NOR' => 'Noorwegen',
+            'NZL' => 'Nieuw-Zeeland',
+            'PAN' => 'Panama',
+            'PAR' => 'Paraguay',
+            'POR' => 'Portugal',
+            'QAT' => 'Qatar',
+            'RSA' => 'Zuid-Afrika',
+            'SCO' => 'Schotland',
+            'SEN' => 'Senegal',
+            'SUI' => 'Zwitserland',
+            'SWE' => 'Zweden',
+            'TUN' => 'Tunesië',
+            'TUR' => 'Turkije',
+            'URY' => 'Uruguay',
+            'USA' => 'Verenigde Staten',
+            'UZB' => 'Oezbekistan',
+        ];
+
+        return $names[$code] ?? $fallback ?? $code ?? '—';
+    }
+}
+
 if (! function_exists('format_date')) {
     function format_date(\Carbon\Carbon|string $date): string
     {

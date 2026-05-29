@@ -34,21 +34,21 @@
                         class="block bg-white rounded-xl px-4 py-3 shadow-sm border transition-all
                             {{ $isOpen ? 'border-gray-100 hover:border-green-300 hover:shadow-md' : 'border-gray-100 opacity-80' }}">
                         <div class="flex items-center gap-3">
-                            <div class="flex-1 flex items-center gap-2">
-                                <span class="text-sm font-semibold text-gray-800 min-w-[60px]">
-                                    {{ get_flag($match->home_team_code) }} {{ $match->home_team_code }}
+                            <div class="flex-1 flex items-center gap-2 min-w-0">
+                                <span class="flex-1 text-sm font-semibold text-gray-800 truncate">
+                                    {{ get_flag($match->home_team_code) }} {{ country_name($match->home_team_code, $match->home_team) }}
                                 </span>
 
                                 @if($isPast)
-                                    <span class="bg-gray-800 text-white text-sm font-bold px-3 py-1 rounded-lg">
+                                    <span class="shrink-0 bg-gray-800 text-white text-sm font-bold px-3 py-1 rounded-lg">
                                         {{ $match->home_score }} - {{ $match->away_score }}
                                     </span>
                                 @else
-                                    <span class="bg-gray-100 text-gray-500 text-xs font-medium px-3 py-1 rounded-lg">vs</span>
+                                    <span class="shrink-0 bg-gray-100 text-gray-500 text-xs font-medium px-3 py-1 rounded-lg">vs</span>
                                 @endif
 
-                                <span class="text-sm font-semibold text-gray-800 min-w-[60px] text-right">
-                                    {{ $match->away_team_code }} {{ get_flag($match->away_team_code) }}
+                                <span class="flex-1 text-sm font-semibold text-gray-800 truncate text-right">
+                                    {{ country_name($match->away_team_code, $match->away_team) }} {{ get_flag($match->away_team_code) }}
                                 </span>
                             </div>
 

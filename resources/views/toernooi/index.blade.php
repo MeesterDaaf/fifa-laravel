@@ -92,8 +92,9 @@
                     class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white">
                     <option value="">— Kies een land —</option>
                     @foreach($teams as $team)
-                        <option value="{{ $team->name }}" {{ $myPrediction?->champion === $team->name ? 'selected' : '' }}>
-                            {{ get_flag($team->tla) }} {{ $team->name }}
+                        @php $teamName = country_name($team->tla, $team->name); @endphp
+                        <option value="{{ $teamName }}" {{ $myPrediction?->champion === $teamName ? 'selected' : '' }}>
+                            {{ get_flag($team->tla) }} {{ $teamName }}
                         </option>
                     @endforeach
                 </select>
@@ -142,7 +143,7 @@
                     <a href="/toernooi?team={{ $team->tla }}#picker"
                         class="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-gray-100 hover:border-green-300 hover:bg-green-50 transition-all">
                         <span class="text-xl">{{ get_flag($team->tla) }}</span>
-                        <span class="text-sm font-medium text-gray-800 truncate">{{ $team->name }}</span>
+                        <span class="text-sm font-medium text-gray-800 truncate">{{ country_name($team->tla, $team->name) }}</span>
                     </a>
                 @endforeach
             </div>
@@ -151,7 +152,7 @@
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-semibold text-gray-700 flex items-center gap-2">
                     <span class="text-2xl">{{ get_flag($selectedTeam->tla) }}</span>
-                    {{ $selectedTeam->name }}
+                    {{ country_name($selectedTeam->tla, $selectedTeam->name) }}
                 </h3>
                 <a href="/toernooi#picker" class="text-sm text-green-600 hover:underline">← Ander land</a>
             </div>

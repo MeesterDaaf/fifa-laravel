@@ -68,8 +68,9 @@
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white">
                         <option value="">— Nog niet bekend —</option>
                         @foreach($teams as $team)
-                            <option value="{{ $team->name }}" {{ $tournamentResult?->champion === $team->name ? 'selected' : '' }}>
-                                {{ get_flag($team->tla) }} {{ $team->name }}
+                            @php $teamName = country_name($team->tla, $team->name); @endphp
+                            <option value="{{ $teamName }}" {{ $tournamentResult?->champion === $teamName ? 'selected' : '' }}>
+                                {{ get_flag($team->tla) }} {{ $teamName }}
                             </option>
                         @endforeach
                     </select>
@@ -118,19 +119,19 @@
             @foreach($fixtures as $fixture)
                 <details class="bg-white rounded-xl shadow-sm border border-gray-100">
                     <summary class="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 rounded-xl select-none">
-                        <div class="flex-1 flex items-center gap-2">
-                            <span class="text-sm font-semibold text-gray-800">
-                                {{ get_flag($fixture->home_team_code) }} {{ $fixture->home_team_code }}
+                        <div class="flex-1 flex items-center gap-2 min-w-0">
+                            <span class="flex-1 text-sm font-semibold text-gray-800 truncate">
+                                {{ get_flag($fixture->home_team_code) }} {{ country_name($fixture->home_team_code, $fixture->home_team) }}
                             </span>
                             @if($fixture->isFinished())
-                                <span class="bg-gray-800 text-white text-xs font-bold px-2 py-0.5 rounded">
+                                <span class="shrink-0 bg-gray-800 text-white text-xs font-bold px-2 py-0.5 rounded">
                                     {{ $fixture->home_score }}-{{ $fixture->away_score }}
                                 </span>
                             @else
-                                <span class="text-gray-400 text-xs">vs</span>
+                                <span class="shrink-0 text-gray-400 text-xs">vs</span>
                             @endif
-                            <span class="text-sm font-semibold text-gray-800">
-                                {{ $fixture->away_team_code }} {{ get_flag($fixture->away_team_code) }}
+                            <span class="flex-1 text-sm font-semibold text-gray-800 truncate text-right">
+                                {{ country_name($fixture->away_team_code, $fixture->away_team) }} {{ get_flag($fixture->away_team_code) }}
                             </span>
                         </div>
                         <div class="flex items-center gap-2 flex-shrink-0">
@@ -156,14 +157,14 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-xs text-gray-500 mb-1">{{ $fixture->home_team_code }} score</label>
+                                    <label class="block text-xs text-gray-500 mb-1">{{ country_name($fixture->home_team_code, $fixture->home_team) }} score</label>
                                     <input type="number" name="home_score" min="0"
                                         value="{{ $fixture->home_score }}"
                                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-green-500"
                                         placeholder="0">
                                 </div>
                                 <div>
-                                    <label class="block text-xs text-gray-500 mb-1">{{ $fixture->away_team_code }} score</label>
+                                    <label class="block text-xs text-gray-500 mb-1">{{ country_name($fixture->away_team_code, $fixture->away_team) }} score</label>
                                     <input type="number" name="away_score" min="0"
                                         value="{{ $fixture->away_score }}"
                                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-green-500"

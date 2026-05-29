@@ -10,8 +10,7 @@
 
             <div class="flex-1 text-center">
                 <div class="text-4xl mb-1">{{ get_flag($fixture->home_team_code) }}</div>
-                <div class="font-bold text-lg">{{ $fixture->home_team_code }}</div>
-                <div class="text-green-200 text-xs">{{ $fixture->home_team }}</div>
+                <div class="font-bold text-lg leading-tight">{{ country_name($fixture->home_team_code, $fixture->home_team) }}</div>
             </div>
 
             @if($fixture->isFinished())
@@ -25,8 +24,7 @@
 
             <div class="flex-1 text-center">
                 <div class="text-4xl mb-1">{{ get_flag($fixture->away_team_code) }}</div>
-                <div class="font-bold text-lg">{{ $fixture->away_team_code }}</div>
-                <div class="text-green-200 text-xs">{{ $fixture->away_team }}</div>
+                <div class="font-bold text-lg leading-tight">{{ country_name($fixture->away_team_code, $fixture->away_team) }}</div>
             </div>
         </div>
 
@@ -53,9 +51,9 @@
             </div>
 
             <div class="flex items-center justify-between text-sm font-semibold mb-2">
-                <span class="text-green-700">{{ $fixture->home_team_code }} {{ $probability['home'] }}%</span>
+                <span class="text-green-700">{{ get_flag($fixture->home_team_code) }} {{ $probability['home'] }}%</span>
                 <span class="text-gray-500">Gelijk {{ $probability['draw'] }}%</span>
-                <span class="text-blue-700">{{ $probability['away'] }}% {{ $fixture->away_team_code }}</span>
+                <span class="text-blue-700">{{ $probability['away'] }}% {{ get_flag($fixture->away_team_code) }}</span>
             </div>
 
             <div class="flex h-3 rounded-full overflow-hidden bg-gray-100">
@@ -96,7 +94,7 @@
 
                 <div class="flex items-center gap-4 mb-4">
                     <div class="flex-1 text-center">
-                        <label class="block text-xs text-gray-500 mb-1">{{ $fixture->home_team_code }}</label>
+                        <label class="block text-xs text-gray-500 mb-1">{{ country_name($fixture->home_team_code, $fixture->home_team) }}</label>
                         <input type="number" name="home_score" min="0" max="30"
                             value="{{ old('home_score', $myPrediction?->home_score ?? '') }}"
                             class="w-full text-center text-2xl font-bold border-2 border-gray-200 rounded-xl py-3 focus:outline-none focus:border-green-500"
@@ -104,7 +102,7 @@
                     </div>
                     <div class="text-xl font-bold text-gray-400">-</div>
                     <div class="flex-1 text-center">
-                        <label class="block text-xs text-gray-500 mb-1">{{ $fixture->away_team_code }}</label>
+                        <label class="block text-xs text-gray-500 mb-1">{{ country_name($fixture->away_team_code, $fixture->away_team) }}</label>
                         <input type="number" name="away_score" min="0" max="30"
                             value="{{ old('away_score', $myPrediction?->away_score ?? '') }}"
                             class="w-full text-center text-2xl font-bold border-2 border-gray-200 rounded-xl py-3 focus:outline-none focus:border-green-500"
@@ -146,11 +144,11 @@
             <h3 class="font-semibold text-gray-700 mb-3">Jouw voorspelling</h3>
             <div class="flex items-center justify-between">
                 <div class="text-sm">
-                    <span class="font-bold text-gray-800">{{ $fixture->home_team_code }}</span>
+                    <span class="font-bold text-gray-800">{{ country_name($fixture->home_team_code, $fixture->home_team) }}</span>
                     <span class="mx-2 text-xl font-black text-green-700">
                         {{ $myPrediction->home_score }} - {{ $myPrediction->away_score }}
                     </span>
-                    <span class="font-bold text-gray-800">{{ $fixture->away_team_code }}</span>
+                    <span class="font-bold text-gray-800">{{ country_name($fixture->away_team_code, $fixture->away_team) }}</span>
                 </div>
                 @if($fixture->isFinished())
                     <span class="text-green-700 font-bold text-lg">{{ $myPrediction->total_points }} pt</span>
