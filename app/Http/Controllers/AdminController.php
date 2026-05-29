@@ -24,8 +24,9 @@ class AdminController extends Controller
         $totalUsers = User::where('is_admin', false)->count();
         $inviteCode = Setting::inviteCode();
         $baseUrl = config('app.url');
+        $teams = \App\Models\Team::orderBy('name')->get();
 
-        return view('admin.index', compact('fixtures', 'tournamentResult', 'totalUsers', 'inviteCode', 'baseUrl'));
+        return view('admin.index', compact('fixtures', 'tournamentResult', 'totalUsers', 'inviteCode', 'baseUrl', 'teams'));
     }
 
     public function syncMatches()
@@ -53,11 +54,10 @@ class AdminController extends Controller
         $fixture = Fixture::findOrFail($id);
 
         $data = $request->validate([
-            'status'                   => 'required|in:SCHEDULED,IN_PLAY,FINISHED',
-            'home_score'               => 'nullable|integer|min:0',
-            'away_score'               => 'nullable|integer|min:0',
-            'first_goal_minute'        => 'nullable|integer|min:1|max:120',
-            'first_yellow_card_minute' => 'nullable|integer|min:1|max:120',
+            'status'            => 'required|in:SCHEDULED,IN_PLAY,FINISHED',
+            'home_score'        => 'nullable|integer|min:0',
+            'away_score'        => 'nullable|integer|min:0',
+            'first_goal_minute' => 'nullable|integer|min:1|max:120',
         ]);
 
         $fixture->update($data);
@@ -72,19 +72,25 @@ class AdminController extends Controller
     public function updateTournament(Request $request)
     {
         $data = $request->validate([
-            'top_scorer' => 'nullable|string|max:100',
+            'top_scorer'         => 'nullable|string|max:100',
+            'champion'           => 'nullable|string|max:100',
+            'total_yellow_cards' => 'nullable|integer|min:0|max:2000',
+            'total_red_cards'    => 'nullable|integer|min:0|max:500',
         ]);
 
-        TournamentResult::updateOrCreate(
+        $result = TournamentResult::updateOrCreate(
             ['id' => 'singleton'],
-            ['top_scorer' => $data['top_scorer'] ?? null]
+            [
+                'top_scorer'         => $data['top_scorer'] ?? null,
+                'champion'           => $data['champion'] ?? null,
+                'total_yellow_cards' => $data['total_yellow_cards'] ?? null,
+                'total_red_cards'    => $data['total_red_cards'] ?? null,
+            ]
         );
 
-        if (! empty($data['top_scorer'])) {
-            $this->scoring->calculateTournamentPoints($data['top_scorer']);
-        }
+        $this->scoring->calculateTournamentPoints($result);
 
-        return back()->with('success', 'Toernooi resultaat bijgewerkt! ✅');
+        return back()->with('success', 'Toernooi resultaat bijgewerkt & punten herberekend! ✅');
     }
 
     public function regenerateInviteCode()

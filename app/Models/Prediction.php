@@ -9,8 +9,8 @@ class Prediction extends Model
 {
     protected $fillable = [
         'user_id', 'fixture_id', 'home_score', 'away_score',
-        'first_goal_minute', 'first_yellow_card_minute',
-        'points_score', 'points_yellow', 'points_goal_minute', 'total_points',
+        'first_goal_minute',
+        'points_score', 'points_goal_minute', 'total_points',
         'calculated_at',
     ];
 

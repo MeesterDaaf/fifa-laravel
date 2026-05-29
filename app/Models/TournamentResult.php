@@ -10,5 +10,5 @@ class TournamentResult extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = ['id', 'top_scorer'];
+    protected $fillable = ['id', 'top_scorer', 'total_yellow_cards', 'total_red_cards', 'champion'];
 }

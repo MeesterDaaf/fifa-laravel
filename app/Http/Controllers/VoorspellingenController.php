@@ -56,10 +56,9 @@ class VoorspellingenController extends Controller
         }
 
         $data = $request->validate([
-            'home_score'               => 'required|integer|min:0|max:30',
-            'away_score'               => 'required|integer|min:0|max:30',
-            'first_goal_minute'        => 'nullable|integer|min:1|max:120',
-            'first_yellow_card_minute' => 'nullable|integer|min:1|max:120',
+            'home_score'        => 'required|integer|min:0|max:30',
+            'away_score'        => 'required|integer|min:0|max:30',
+            'first_goal_minute' => 'nullable|integer|min:1|max:120',
         ]);
 
         Prediction::updateOrCreate(

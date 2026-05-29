@@ -56,19 +56,51 @@
 
     {{-- Toernooi resultaat --}}
     <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">🥇 Toernooi resultaat</h2>
-        <form method="POST" action="/admin/tournament">
+        <h2 class="text-lg font-semibold text-gray-800 mb-1">🏆 Toernooi resultaat</h2>
+        <p class="text-gray-500 text-sm mb-4">Vul de officiële uitslagen in. Bij opslaan worden alle toernooipunten herberekend.</p>
+        <form method="POST" action="/admin/tournament" class="space-y-3">
             @csrf
-            <div class="flex gap-3">
-                <input type="text" name="top_scorer"
-                    value="{{ old('top_scorer', $tournamentResult?->top_scorer) }}"
-                    placeholder="Naam van de topscorer"
-                    class="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
-                <button type="submit"
-                    class="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
-                    Opslaan
-                </button>
+
+            <div class="grid sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">🏆 Toernooiwinnaar</label>
+                    <select name="champion"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white">
+                        <option value="">— Nog niet bekend —</option>
+                        @foreach($teams as $team)
+                            <option value="{{ $team->name }}" {{ $tournamentResult?->champion === $team->name ? 'selected' : '' }}>
+                                {{ get_flag($team->tla) }} {{ $team->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">🥇 Topscorer</label>
+                    <input type="text" name="top_scorer"
+                        value="{{ old('top_scorer', $tournamentResult?->top_scorer) }}"
+                        placeholder="Naam van de topscorer"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">🟨 Totaal gele kaarten</label>
+                    <input type="number" name="total_yellow_cards" min="0" max="2000"
+                        value="{{ old('total_yellow_cards', $tournamentResult?->total_yellow_cards) }}"
+                        placeholder="bv. 220"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">🟥 Totaal rode kaarten</label>
+                    <input type="number" name="total_red_cards" min="0" max="500"
+                        value="{{ old('total_red_cards', $tournamentResult?->total_red_cards) }}"
+                        placeholder="bv. 12"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+                </div>
             </div>
+
+            <button type="submit"
+                class="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
+                💾 Opslaan &amp; punten herberekenen
+            </button>
         </form>
     </section>
 
@@ -143,13 +175,6 @@
                                         value="{{ $fixture->first_goal_minute }}"
                                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-green-500"
                                         placeholder="bv. 23">
-                                </div>
-                                <div>
-                                    <label class="block text-xs text-gray-500 mb-1">1e gele kaart (min.)</label>
-                                    <input type="number" name="first_yellow_card_minute" min="1" max="120"
-                                        value="{{ $fixture->first_yellow_card_minute }}"
-                                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-green-500"
-                                        placeholder="bv. 15">
                                 </div>
                             </div>
                             <button type="submit"

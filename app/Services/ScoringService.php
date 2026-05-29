@@ -29,12 +29,6 @@ class ScoringService
             return ['pred' => $pred, 'pointsScore' => $pointsScore];
         });
 
-        $yellowBonusId = $this->findBonusWinner(
-            $scored,
-            $fixture->first_yellow_card_minute,
-            fn($p) => $p['pred']->first_yellow_card_minute,
-        );
-
         $goalBonusId = $this->findBonusWinner(
             $scored,
             $fixture->first_goal_minute,
@@ -43,25 +37,71 @@ class ScoringService
 
         foreach ($scored as $item) {
             $pred = $item['pred'];
-            $pointsYellow = $pred->id === $yellowBonusId ? 3 : 0;
             $pointsGoal = $pred->id === $goalBonusId ? 3 : 0;
 
             $pred->update([
                 'points_score'        => $item['pointsScore'],
-                'points_yellow'       => $pointsYellow,
                 'points_goal_minute'  => $pointsGoal,
-                'total_points'        => $item['pointsScore'] + $pointsYellow + $pointsGoal,
+                'total_points'        => $item['pointsScore'] + $pointsGoal,
                 'calculated_at'       => now(),
             ]);
         }
     }
 
-    public function calculateTournamentPoints(string $actualTopScorer): void
+    /**
+     * Berekent toernooipunten op basis van de officiële uitslag.
+     *  - Topscorer juist (exacte naam):           10 punten
+     *  - Toernooiwinnaar juist (exact land):       15 punten
+     *  - Dichtst bij totaal gele kaarten:           5 punten (1 winnaar)
+     *  - Dichtst bij totaal rode kaarten:           5 punten (1 winnaar)
+     */
+    public function calculateTournamentPoints(TournamentResult $result): void
     {
-        TournamentPrediction::all()->each(function ($pred) use ($actualTopScorer) {
-            $points = strtolower(trim($pred->top_scorer)) === strtolower(trim($actualTopScorer)) ? 10 : 0;
-            $pred->update(['points' => $points]);
-        });
+        $preds = TournamentPrediction::all();
+
+        $yellowWinnerId = $this->closestPredictionId($preds, $result->total_yellow_cards, fn($p) => $p->total_yellow_cards);
+        $redWinnerId    = $this->closestPredictionId($preds, $result->total_red_cards, fn($p) => $p->total_red_cards);
+
+        foreach ($preds as $pred) {
+            $pTop = $this->namesMatch($pred->top_scorer, $result->top_scorer) ? 10 : 0;
+            $pChampion = $this->namesMatch($pred->champion, $result->champion) ? 15 : 0;
+            $pYellow = $pred->id === $yellowWinnerId ? 5 : 0;
+            $pRed = $pred->id === $redWinnerId ? 5 : 0;
+
+            $pred->update([
+                'points_top_scorer' => $pTop,
+                'points_champion'   => $pChampion,
+                'points_yellow'     => $pYellow,
+                'points_red'        => $pRed,
+                'points'            => $pTop + $pChampion + $pYellow + $pRed,
+            ]);
+        }
+    }
+
+    private function namesMatch(?string $a, ?string $b): bool
+    {
+        if ($a === null || $b === null || trim($a) === '' || trim($b) === '') {
+            return false;
+        }
+        return strtolower(trim($a)) === strtolower(trim($b));
+    }
+
+    /** Geeft het id van de voorspelling die het dichtst bij $actual zit (1 unieke winnaar). */
+    private function closestPredictionId(\Illuminate\Support\Collection $preds, ?int $actual, callable $getter): ?int
+    {
+        if ($actual === null) {
+            return null;
+        }
+
+        $valid = $preds->filter(fn($p) => $getter($p) !== null);
+        if ($valid->isEmpty()) {
+            return null;
+        }
+
+        $minDiff = $valid->min(fn($p) => abs($getter($p) - $actual));
+        $winners = $valid->filter(fn($p) => abs($getter($p) - $actual) === $minDiff);
+
+        return $winners->count() === 1 ? $winners->first()->id : null;
     }
 
     public function getLeaderboard(): array

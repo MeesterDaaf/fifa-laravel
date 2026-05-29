@@ -48,15 +48,29 @@ class ToernooiController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'top_scorer' => 'required|string|max:100',
+        $request->validate([
+            'top_scorer'         => 'nullable|string|max:100',
+            'champion'           => 'nullable|string|max:100',
+            'total_yellow_cards' => 'nullable|integer|min:0|max:2000',
+            'total_red_cards'    => 'nullable|integer|min:0|max:500',
         ]);
+
+        // Werk alleen de velden bij die in dit formulier zijn meegestuurd,
+        // zodat de topscorer-picker en het kaarten/winnaar-formulier los werken.
+        $fields = ['top_scorer', 'champion', 'total_yellow_cards', 'total_red_cards'];
+        $update = [];
+        foreach ($fields as $field) {
+            if ($request->has($field)) {
+                $value = $request->input($field);
+                $update[$field] = ($value === '' ? null : $value);
+            }
+        }
 
         TournamentPrediction::updateOrCreate(
             ['user_id' => auth()->id()],
-            $data
+            $update
         );
 
-        return redirect('/toernooi')->with('success', 'Topscorer-voorspelling opgeslagen! ✅');
+        return redirect('/toernooi')->with('success', 'Voorspelling opgeslagen! ✅');
     }
 }

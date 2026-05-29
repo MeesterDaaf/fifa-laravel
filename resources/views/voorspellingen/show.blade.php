@@ -34,20 +34,12 @@
             <div class="text-center text-green-300 text-xs mt-3">Groep {{ $fixture->match_group }}</div>
         @endif
 
-        @if($fixture->isFinished())
-            <div class="mt-4 grid grid-cols-2 gap-3 text-center text-sm">
-                @if($fixture->first_goal_minute !== null)
-                    <div class="bg-white/10 rounded-lg py-2">
-                        <div class="text-white font-bold">{{ $fixture->first_goal_minute }}'</div>
-                        <div class="text-green-300 text-xs">1e doelpunt</div>
-                    </div>
-                @endif
-                @if($fixture->first_yellow_card_minute !== null)
-                    <div class="bg-white/10 rounded-lg py-2">
-                        <div class="text-yellow-300 font-bold">{{ $fixture->first_yellow_card_minute }}'</div>
-                        <div class="text-green-300 text-xs">1e gele kaart 🟨</div>
-                    </div>
-                @endif
+        @if($fixture->isFinished() && $fixture->first_goal_minute !== null)
+            <div class="mt-4 flex justify-center text-center text-sm">
+                <div class="bg-white/10 rounded-lg py-2 px-6">
+                    <div class="text-white font-bold">{{ $fixture->first_goal_minute }}'</div>
+                    <div class="text-green-300 text-xs">1e doelpunt</div>
+                </div>
             </div>
         @endif
     </div>
@@ -89,7 +81,6 @@
             <li>⚽ Exacte uitslag: <strong>5 punten</strong></li>
             <li>✅ Juiste winnaar/gelijkspel: <strong>2 punten</strong></li>
             <li>🕐 Dichtstbijzijnde 1e doelpuntminuut: <strong>+3 bonuspunten</strong></li>
-            <li>🟨 Dichtstbijzijnde 1e gele kaart minuut: <strong>+3 bonuspunten</strong></li>
         </ul>
     </div>
 
@@ -121,21 +112,12 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 mb-4">
-                    <div>
-                        <label class="block text-xs text-gray-500 mb-1">⚽ 1e doelpunt (minuut, optioneel)</label>
-                        <input type="number" name="first_goal_minute" min="1" max="120"
-                            value="{{ old('first_goal_minute', $myPrediction?->first_goal_minute) }}"
-                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-green-500"
-                            placeholder="bv. 23">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gray-500 mb-1">🟨 1e gele kaart (minuut, optioneel)</label>
-                        <input type="number" name="first_yellow_card_minute" min="1" max="120"
-                            value="{{ old('first_yellow_card_minute', $myPrediction?->first_yellow_card_minute) }}"
-                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-green-500"
-                            placeholder="bv. 15">
-                    </div>
+                <div class="mb-4">
+                    <label class="block text-xs text-gray-500 mb-1">⚽ 1e doelpunt (minuut, optioneel)</label>
+                    <input type="number" name="first_goal_minute" min="1" max="120"
+                        value="{{ old('first_goal_minute', $myPrediction?->first_goal_minute) }}"
+                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-green-500"
+                        placeholder="bv. 23">
                 </div>
 
                 @if($errors->any())
@@ -177,15 +159,9 @@
             @if($myPrediction->first_goal_minute !== null)
                 <p class="text-xs text-gray-500 mt-1">1e doelpunt: minuut {{ $myPrediction->first_goal_minute }}</p>
             @endif
-            @if($myPrediction->first_yellow_card_minute !== null)
-                <p class="text-xs text-gray-500">1e gele kaart: minuut {{ $myPrediction->first_yellow_card_minute }}</p>
-            @endif
             @if($fixture->isFinished() && $myPrediction->total_points > 0)
                 <div class="mt-2 text-xs text-gray-500 space-y-0.5">
                     <p>Score punten: {{ $myPrediction->points_score }}pt</p>
-                    @if($myPrediction->points_yellow > 0)
-                        <p>🟨 Bonus gele kaart: +{{ $myPrediction->points_yellow }}pt</p>
-                    @endif
                     @if($myPrediction->points_goal_minute > 0)
                         <p>⚽ Bonus doelpuntminuut: +{{ $myPrediction->points_goal_minute }}pt</p>
                     @endif
@@ -213,9 +189,6 @@
                     <span class="text-sm font-mono text-gray-700">{{ $pred->home_score }}-{{ $pred->away_score }}</span>
                     @if($pred->first_goal_minute !== null)
                         <span class="text-xs text-gray-500">⚽{{ $pred->first_goal_minute }}'</span>
-                    @endif
-                    @if($pred->first_yellow_card_minute !== null)
-                        <span class="text-xs text-gray-500">🟨{{ $pred->first_yellow_card_minute }}'</span>
                     @endif
                     <span class="font-bold text-green-700 w-12 text-right">{{ $pred->total_points }}pt</span>
                 </div>

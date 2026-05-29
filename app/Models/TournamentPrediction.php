@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TournamentPrediction extends Model
 {
-    protected $fillable = ['user_id', 'top_scorer', 'points'];
+    protected $fillable = [
+        'user_id', 'top_scorer', 'total_yellow_cards', 'total_red_cards', 'champion',
+        'points', 'points_top_scorer', 'points_yellow', 'points_red', 'points_champion',
+    ];
 
     public function user(): BelongsTo
     {

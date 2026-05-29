@@ -87,13 +87,25 @@
                 <span class="text-base">🕐</span>
                 <div><p class="font-medium">Dichtstbijzijnde 1e doelpunt</p><p class="text-gray-400">+3 bonuspunten</p></div>
             </div>
+        </div>
+
+        <h2 class="font-semibold text-gray-700 mb-3 mt-5 text-sm">🏆 Toernooi-bonus</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-600">
             <div class="flex items-start gap-2">
-                <span class="text-base">🟨</span>
-                <div><p class="font-medium">Dichtstbijzijnde 1e gele kaart</p><p class="text-gray-400">+3 bonuspunten</p></div>
+                <span class="text-base">🏆</span>
+                <div><p class="font-medium">Juiste toernooiwinnaar</p><p class="text-gray-400">15 punten</p></div>
             </div>
             <div class="flex items-start gap-2">
                 <span class="text-base">🥇</span>
                 <div><p class="font-medium">Juiste topscorer WK</p><p class="text-gray-400">10 punten</p></div>
+            </div>
+            <div class="flex items-start gap-2">
+                <span class="text-base">🟨</span>
+                <div><p class="font-medium">Dichtst bij totaal gele kaarten</p><p class="text-gray-400">5 punten</p></div>
+            </div>
+            <div class="flex items-start gap-2">
+                <span class="text-base">🟥</span>
+                <div><p class="font-medium">Dichtst bij totaal rode kaarten</p><p class="text-gray-400">5 punten</p></div>
             </div>
         </div>
     </div>
