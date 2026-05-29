@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Fixture extends Model
 {
+    /** Aantal minuten vóór aftrap dat voorspellingen sluiten. */
+    public const LOCK_MINUTES = 15;
+
     protected $fillable = [
         'external_id', 'home_team', 'away_team', 'home_team_code', 'away_team_code',
         'scheduled_at', 'stage', 'match_group', 'status',
@@ -24,12 +27,27 @@ class Fixture extends Model
 
     public function isOpen(): bool
     {
-        return $this->status === 'SCHEDULED' && now()->lt($this->scheduled_at);
+        // Sluit LOCK_MINUTES vóór de aftrap: open zolang nu + 15 min < aftrap.
+        return $this->status === 'SCHEDULED'
+            && now()->addMinutes(self::LOCK_MINUTES)->lt($this->scheduled_at);
     }
 
     public function isFinished(): bool
     {
         return $this->status === 'FINISHED';
+    }
+
+    /** Tijdstip waarop voorspellen sluit (15 min vóór aftrap). */
+    public function locksAt(): \Carbon\Carbon
+    {
+        return $this->scheduled_at->copy()->subMinutes(self::LOCK_MINUTES);
+    }
+
+    /** Wedstrijden waarvoor nog voorspeld mag worden. */
+    public function scopeOpenForPredictions($query)
+    {
+        return $query->where('status', 'SCHEDULED')
+            ->where('scheduled_at', '>', now()->addMinutes(self::LOCK_MINUTES));
     }
 
     public function stageLabel(): string

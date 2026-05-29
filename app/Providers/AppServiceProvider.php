@@ -41,7 +41,11 @@ class AppServiceProvider extends ServiceProvider
                     ->pluck('fixture_id')
                     ->flip();
 
-                $todoCount = $next->reject(fn ($m) => isset($predictedIds[$m->id]))->count();
+                // Alleen nog-open wedstrijden (niet binnen 15 min vóór aftrap) tellen als "te doen".
+                $todoCount = $next
+                    ->filter(fn ($m) => $m->isOpen())
+                    ->reject(fn ($m) => isset($predictedIds[$m->id]))
+                    ->count();
             }
 
             $view->with(compact('next', 'predictedIds', 'todoCount'));

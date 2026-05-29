@@ -22,10 +22,9 @@ class HomeController extends Controller
             ->limit(5)
             ->get();
 
-        // Voortgang wedstrijd-voorspellingen (alleen nog open wedstrijden tellen mee).
-        $openFixtureIds = Fixture::where('status', 'SCHEDULED')
-            ->where('scheduled_at', '>=', $now)
-            ->pluck('id');
+        // Voortgang wedstrijd-voorspellingen (alleen wedstrijden die nog te
+        // voorspellen zijn — gesloten 15 min vóór aftrap — tellen mee).
+        $openFixtureIds = Fixture::openForPredictions()->pluck('id');
         $openCount = $openFixtureIds->count();
         $predictedCount = Prediction::where('user_id', $user->id)
             ->whereIn('fixture_id', $openFixtureIds)

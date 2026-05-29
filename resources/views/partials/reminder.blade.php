@@ -36,6 +36,8 @@
                 </div>
                 @if($predicted)
                     <span class="text-xs text-green-600 font-medium shrink-0">✅</span>
+                @elseif(! $match->isOpen())
+                    <span class="text-xs text-gray-400 font-medium shrink-0" title="Voorspellen gesloten">🔒</span>
                 @else
                     <span class="text-xs text-orange-500 font-medium shrink-0">⏳</span>
                 @endif

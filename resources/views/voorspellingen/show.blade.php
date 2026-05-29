@@ -85,9 +85,10 @@
     {{-- Voorspelformulier --}}
     @if($fixture->isOpen())
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-            <h3 class="font-semibold text-gray-700 mb-4">
+            <h3 class="font-semibold text-gray-700 mb-1">
                 {{ $myPrediction ? 'Voorspelling aanpassen' : 'Jouw voorspelling' }}
             </h3>
+            <p class="text-xs text-gray-400 mb-4">⏳ Voorspellen kan tot {{ format_date($fixture->locksAt()) }} ({{ \App\Models\Fixture::LOCK_MINUTES }} min vóór aanvang)</p>
 
             <form method="POST" action="/voorspellingen/{{ $fixture->id }}">
                 @csrf
@@ -134,7 +135,7 @@
 
     @if(!$fixture->isOpen() && !$fixture->isFinished())
         <div class="bg-gray-100 rounded-xl p-4 text-center text-gray-500 text-sm mb-6">
-            ⏸️ Voorspelling gesloten — wedstrijd is gestart
+            🔒 Voorspellen gesloten — sluit {{ \App\Models\Fixture::LOCK_MINUTES }} minuten vóór aanvang
         </div>
     @endif
 
