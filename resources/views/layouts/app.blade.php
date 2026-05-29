@@ -16,6 +16,7 @@
                     <a href="/voorspellingen" class="text-sm text-gray-600 hover:text-green-700 transition-colors px-2 py-1">Wedstrijden</a>
                     <a href="/toernooi" class="text-sm text-gray-600 hover:text-green-700 transition-colors px-2 py-1">Toernooi</a>
                     <a href="/ranglijst" class="text-sm text-gray-600 hover:text-green-700 transition-colors px-2 py-1">Ranglijst</a>
+                    <a href="/deelnemers" class="text-sm text-gray-600 hover:text-green-700 transition-colors px-2 py-1">Deelnemers</a>
                     @if(auth()->user()?->is_admin)
                         <a href="/admin" class="text-sm text-gray-600 hover:text-green-700 transition-colors px-2 py-1">Admin</a>
                     @endif

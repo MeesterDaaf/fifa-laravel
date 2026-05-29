@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DeelnemersController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RanglijstController;
 use App\Http\Controllers\ToernooiController;
@@ -23,6 +24,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/voorspellingen/{id}', [VoorspellingenController::class, 'store']);
     Route::get('/toernooi', [ToernooiController::class, 'index']);
     Route::post('/toernooi', [ToernooiController::class, 'store']);
+    Route::get('/deelnemers', [DeelnemersController::class, 'index']);
+    Route::get('/deelnemers/{user}', [DeelnemersController::class, 'show']);
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::middleware('admin')->prefix('admin')->group(function () {
