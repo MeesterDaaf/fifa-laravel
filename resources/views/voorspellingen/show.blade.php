@@ -76,9 +76,9 @@
     <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6 text-sm text-blue-800">
         <p class="font-semibold mb-1">🎯 Puntensysteem</p>
         <ul class="space-y-0.5 text-xs text-blue-700">
-            <li>⚽ Exacte uitslag: <strong>5 punten</strong></li>
-            <li>✅ Juiste winnaar/gelijkspel: <strong>2 punten</strong></li>
-            <li>🕐 Dichtstbijzijnde 1e doelpuntminuut: <strong>+3 bonuspunten</strong></li>
+            <li>⚽ Exacte uitslag: <strong>{{ config('scoring.match.exact') }} punten</strong></li>
+            <li>✅ Juiste winnaar/gelijkspel: <strong>{{ config('scoring.match.outcome') }} punten</strong></li>
+            <li>🕐 Dichtstbijzijnde 1e doelpuntminuut: <strong>+{{ config('scoring.match.goal_minute_bonus') }} bonuspunten</strong></li>
         </ul>
     </div>
 

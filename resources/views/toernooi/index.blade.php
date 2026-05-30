@@ -10,10 +10,10 @@
     <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6">
         <p class="font-semibold text-blue-800 text-sm mb-2">🎯 Toernooi punten</p>
         <ul class="text-xs text-blue-700 space-y-1">
-            <li>🏆 Juiste toernooiwinnaar: <strong>15 punten</strong></li>
-            <li>🥇 Juiste topscorer: <strong>10 punten</strong></li>
-            <li>🟨 Dichtst bij totaal gele kaarten: <strong>5 punten</strong></li>
-            <li>🟥 Dichtst bij totaal rode kaarten: <strong>5 punten</strong></li>
+            <li>🏆 Juiste toernooiwinnaar: <strong>{{ config('scoring.tournament.champion') }} punten</strong></li>
+            <li>🥇 Juiste topscorer: <strong>{{ config('scoring.tournament.top_scorer') }} punten</strong></li>
+            <li>🟨 Dichtst bij totaal gele kaarten: <strong>{{ config('scoring.tournament.yellow_cards') }} punten</strong></li>
+            <li>🟥 Dichtst bij totaal rode kaarten: <strong>{{ config('scoring.tournament.red_cards') }} punten</strong></li>
         </ul>
     </div>
 

@@ -22,9 +22,9 @@ class ScoringService
         $scored = $fixture->predictions->map(function ($pred) use ($fixture, $actualResult) {
             $pointsScore = 0;
             if ($pred->home_score === $fixture->home_score && $pred->away_score === $fixture->away_score) {
-                $pointsScore = 5;
+                $pointsScore = config('scoring.match.exact');
             } elseif ($this->getResult($pred->home_score, $pred->away_score) === $actualResult) {
-                $pointsScore = 2;
+                $pointsScore = config('scoring.match.outcome');
             }
             return ['pred' => $pred, 'pointsScore' => $pointsScore];
         });
@@ -37,7 +37,7 @@ class ScoringService
 
         foreach ($scored as $item) {
             $pred = $item['pred'];
-            $pointsGoal = $pred->id === $goalBonusId ? 3 : 0;
+            $pointsGoal = $pred->id === $goalBonusId ? config('scoring.match.goal_minute_bonus') : 0;
 
             $pred->update([
                 'points_score'        => $item['pointsScore'],
@@ -50,10 +50,7 @@ class ScoringService
 
     /**
      * Berekent toernooipunten op basis van de officiële uitslag.
-     *  - Topscorer juist (exacte naam):           10 punten
-     *  - Toernooiwinnaar juist (exact land):       15 punten
-     *  - Dichtst bij totaal gele kaarten:           5 punten (1 winnaar)
-     *  - Dichtst bij totaal rode kaarten:           5 punten (1 winnaar)
+     * Puntwaarden komen uit config/scoring.php (tournament.*).
      */
     public function calculateTournamentPoints(TournamentResult $result): void
     {
@@ -63,10 +60,10 @@ class ScoringService
         $redWinnerId    = $this->closestPredictionId($preds, $result->total_red_cards, fn($p) => $p->total_red_cards);
 
         foreach ($preds as $pred) {
-            $pTop = $this->namesMatch($pred->top_scorer, $result->top_scorer) ? 10 : 0;
-            $pChampion = $this->namesMatch($pred->champion, $result->champion) ? 15 : 0;
-            $pYellow = $pred->id === $yellowWinnerId ? 5 : 0;
-            $pRed = $pred->id === $redWinnerId ? 5 : 0;
+            $pTop = $this->namesMatch($pred->top_scorer, $result->top_scorer) ? config('scoring.tournament.top_scorer') : 0;
+            $pChampion = $this->namesMatch($pred->champion, $result->champion) ? config('scoring.tournament.champion') : 0;
+            $pYellow = $pred->id === $yellowWinnerId ? config('scoring.tournament.yellow_cards') : 0;
+            $pRed = $pred->id === $redWinnerId ? config('scoring.tournament.red_cards') : 0;
 
             $pred->update([
                 'points_top_scorer' => $pTop,

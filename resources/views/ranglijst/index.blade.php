@@ -77,15 +77,15 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-600">
             <div class="flex items-start gap-2">
                 <span class="text-base">⚽</span>
-                <div><p class="font-medium">Exacte uitslag</p><p class="text-gray-400">5 punten</p></div>
+                <div><p class="font-medium">Exacte uitslag</p><p class="text-gray-400">{{ config('scoring.match.exact') }} punten</p></div>
             </div>
             <div class="flex items-start gap-2">
                 <span class="text-base">✅</span>
-                <div><p class="font-medium">Juiste winnaar/gelijkspel</p><p class="text-gray-400">2 punten</p></div>
+                <div><p class="font-medium">Juiste winnaar/gelijkspel</p><p class="text-gray-400">{{ config('scoring.match.outcome') }} punten</p></div>
             </div>
             <div class="flex items-start gap-2">
                 <span class="text-base">🕐</span>
-                <div><p class="font-medium">Dichtstbijzijnde 1e doelpunt</p><p class="text-gray-400">+3 bonuspunten</p></div>
+                <div><p class="font-medium">Dichtstbijzijnde 1e doelpunt</p><p class="text-gray-400">+{{ config('scoring.match.goal_minute_bonus') }} bonuspunten</p></div>
             </div>
         </div>
 
@@ -93,19 +93,19 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-600">
             <div class="flex items-start gap-2">
                 <span class="text-base">🏆</span>
-                <div><p class="font-medium">Juiste toernooiwinnaar</p><p class="text-gray-400">15 punten</p></div>
+                <div><p class="font-medium">Juiste toernooiwinnaar</p><p class="text-gray-400">{{ config('scoring.tournament.champion') }} punten</p></div>
             </div>
             <div class="flex items-start gap-2">
                 <span class="text-base">🥇</span>
-                <div><p class="font-medium">Juiste topscorer WK</p><p class="text-gray-400">10 punten</p></div>
+                <div><p class="font-medium">Juiste topscorer WK</p><p class="text-gray-400">{{ config('scoring.tournament.top_scorer') }} punten</p></div>
             </div>
             <div class="flex items-start gap-2">
                 <span class="text-base">🟨</span>
-                <div><p class="font-medium">Dichtst bij totaal gele kaarten</p><p class="text-gray-400">5 punten</p></div>
+                <div><p class="font-medium">Dichtst bij totaal gele kaarten</p><p class="text-gray-400">{{ config('scoring.tournament.yellow_cards') }} punten</p></div>
             </div>
             <div class="flex items-start gap-2">
                 <span class="text-base">🟥</span>
-                <div><p class="font-medium">Dichtst bij totaal rode kaarten</p><p class="text-gray-400">5 punten</p></div>
+                <div><p class="font-medium">Dichtst bij totaal rode kaarten</p><p class="text-gray-400">{{ config('scoring.tournament.red_cards') }} punten</p></div>
             </div>
         </div>
     </div>
