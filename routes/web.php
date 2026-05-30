@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/match/{id}', [AdminController::class, 'updateMatch']);
         Route::post('/tournament', [AdminController::class, 'updateTournament']);
         Route::post('/invite/regenerate', [AdminController::class, 'regenerateInviteCode']);
+        Route::post('/whatsapp', [AdminController::class, 'updateWhatsapp']);
         Route::post('/send-reminders', [AdminController::class, 'sendReminders']);
         Route::post('/ai-predict', [AdminController::class, 'aiPredict']);
         Route::post('/users/{user}/remind', [AdminController::class, 'remindUser']);

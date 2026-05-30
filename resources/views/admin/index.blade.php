@@ -30,6 +30,38 @@
         </form>
     </section>
 
+    {{-- WhatsApp-groep --}}
+    <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-2">💬 WhatsApp-groep</h2>
+        <p class="text-gray-500 text-sm mb-4">
+            Plak hier de uitnodigingslink van je WhatsApp-groep (WhatsApp → groep → "Uitnodigen via link").
+            Deelnemers zien dan een knop op het dashboard om zelf de groep in te gaan.
+        </p>
+
+        <form method="POST" action="/admin/whatsapp" class="flex gap-3 mb-4">
+            @csrf
+            <input type="url" name="whatsapp_group_url"
+                value="{{ old('whatsapp_group_url', $whatsappGroupUrl) }}"
+                placeholder="https://chat.whatsapp.com/..."
+                class="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+            <button type="submit"
+                class="bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
+                Opslaan
+            </button>
+        </form>
+
+        @if($whatsappReminderText)
+            <p class="text-xs text-gray-500 mb-2">Klaargezette reminder (jij kiest de groep en verstuurt):</p>
+            <div class="bg-gray-50 rounded-xl p-3 text-sm text-gray-600 mb-3">{{ $whatsappReminderText }}</div>
+            <a href="https://wa.me/?text={{ rawurlencode($whatsappReminderText) }}" target="_blank" rel="noopener"
+                class="inline-block bg-[#25D366] hover:bg-[#1ebe5d] text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
+                📣 Stuur reminder via WhatsApp
+            </a>
+        @else
+            <p class="text-sm text-gray-400">Geen open wedstrijden om een reminder voor te maken.</p>
+        @endif
+    </section>
+
     {{-- Wedstrijden synchroniseren --}}
     <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
         <h2 class="text-lg font-semibold text-gray-800 mb-2">🔄 Wedstrijden synchroniseren</h2>

@@ -14,6 +14,12 @@
             <a href="/toernooi" class="bg-green-600 border border-white/30 text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-green-500 transition-colors text-sm">
                 🏆 Toernooi voorspelling
             </a>
+            @if($whatsappGroupUrl)
+                <a href="{{ $whatsappGroupUrl }}" target="_blank" rel="noopener"
+                    class="bg-[#25D366] text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-[#1ebe5d] transition-colors text-sm">
+                    💬 WhatsApp-groep
+                </a>
+            @endif
         </div>
     </div>
 

@@ -26,8 +26,13 @@ class AdminController extends Controller
         $baseUrl = config('app.url');
         $teams = \App\Models\Team::orderBy('name')->get();
         $users = User::orderBy('is_admin')->orderBy('name')->get();
+        $whatsappGroupUrl = Setting::whatsappGroupUrl();
+        $whatsappReminderText = app(\App\Services\ReminderService::class)->whatsappText();
 
-        return view('admin.index', compact('fixtures', 'tournamentResult', 'totalUsers', 'inviteCode', 'baseUrl', 'teams', 'users'));
+        return view('admin.index', compact(
+            'fixtures', 'tournamentResult', 'totalUsers', 'inviteCode', 'baseUrl',
+            'teams', 'users', 'whatsappGroupUrl', 'whatsappReminderText'
+        ));
     }
 
     public function syncMatches()
@@ -98,6 +103,17 @@ class AdminController extends Controller
     {
         Setting::regenerateInviteCode();
         return back()->with('success', 'Uitnodigingscode vernieuwd! ✅');
+    }
+
+    public function updateWhatsapp(Request $request)
+    {
+        $data = $request->validate([
+            'whatsapp_group_url' => 'nullable|url|max:255',
+        ]);
+
+        Setting::setWhatsappGroupUrl($data['whatsapp_group_url'] ?? null);
+
+        return back()->with('success', 'WhatsApp-groepslink opgeslagen! ✅');
     }
 
     public function sendReminders(\App\Services\ReminderService $reminders)

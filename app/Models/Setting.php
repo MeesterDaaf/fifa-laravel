@@ -11,7 +11,7 @@ class Setting extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = ['id', 'invite_code'];
+    protected $fillable = ['id', 'invite_code', 'whatsapp_group_url'];
 
     public static function inviteCode(): string
     {
@@ -26,5 +26,15 @@ class Setting extends Model
         $code = (string) Str::uuid();
         static::updateOrCreate(['id' => 'singleton'], ['invite_code' => $code]);
         return $code;
+    }
+
+    public static function whatsappGroupUrl(): ?string
+    {
+        return static::firstOrCreate(['id' => 'singleton'])->whatsapp_group_url;
+    }
+
+    public static function setWhatsappGroupUrl(?string $url): void
+    {
+        static::updateOrCreate(['id' => 'singleton'], ['whatsapp_group_url' => $url]);
     }
 }

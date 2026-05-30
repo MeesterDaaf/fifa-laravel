@@ -52,9 +52,12 @@ class HomeController extends Controller
 
         $leaderboard = array_slice($this->scoring->getLeaderboard(), 0, 5);
 
+        $whatsappGroupUrl = \App\Models\Setting::whatsappGroupUrl();
+
         return view('home.index', compact(
             'upcoming', 'recent', 'myPredIds', 'leaderboard',
-            'openCount', 'predictedCount', 'tournamentStatus', 'tournamentDone'
+            'openCount', 'predictedCount', 'tournamentStatus', 'tournamentDone',
+            'whatsappGroupUrl'
         ));
     }
 }
