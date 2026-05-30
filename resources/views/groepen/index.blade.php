@@ -69,13 +69,19 @@
                 <div class="border-t border-gray-100">
                     @foreach($data['matches'] as $m)
                         <a href="/voorspellingen/{{ $m->id }}" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 transition-colors text-xs">
-                            <span class="flex-1 text-right truncate text-gray-700">{{ country_name($m->home_team_code, $m->home_team) }} {{ get_flag($m->home_team_code) }}</span>
+                            <span class="flex-1 flex items-center justify-end gap-1 min-w-0 text-gray-700">
+                                <span class="truncate text-right">{{ country_name($m->home_team_code, $m->home_team) }}</span>
+                                <span class="shrink-0">{{ get_flag($m->home_team_code) }}</span>
+                            </span>
                             @if($m->isFinished())
                                 <span class="shrink-0 font-bold text-gray-800 bg-gray-100 px-2 py-0.5 rounded">{{ $m->home_score }}-{{ $m->away_score }}</span>
                             @else
                                 <span class="shrink-0 text-gray-400">{{ to_nl_time($m->scheduled_at)->format('d/m H:i') }}</span>
                             @endif
-                            <span class="flex-1 truncate text-gray-700">{{ get_flag($m->away_team_code) }} {{ country_name($m->away_team_code, $m->away_team) }}</span>
+                            <span class="flex-1 flex items-center gap-1 min-w-0 text-gray-700">
+                                <span class="shrink-0">{{ get_flag($m->away_team_code) }}</span>
+                                <span class="truncate">{{ country_name($m->away_team_code, $m->away_team) }}</span>
+                            </span>
                         </a>
                     @endforeach
                 </div>

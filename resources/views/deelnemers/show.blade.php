@@ -64,8 +64,9 @@
                     <div class="bg-white rounded-xl px-4 py-3 shadow-sm border border-gray-100">
                         <div class="flex items-center gap-3">
                             <div class="flex-1 flex items-center gap-2 min-w-0">
-                                <span class="flex-1 text-sm font-semibold text-gray-800 truncate">
-                                    {{ get_flag($match->home_team_code) }} {{ country_name($match->home_team_code, $match->home_team) }}
+                                <span class="flex-1 flex items-center gap-1 min-w-0 text-sm font-semibold text-gray-800">
+                                    <span class="shrink-0">{{ get_flag($match->home_team_code) }}</span>
+                                    <span class="truncate">{{ country_name($match->home_team_code, $match->home_team) }}</span>
                                 </span>
                                 @if($match->isFinished())
                                     <span class="shrink-0 bg-gray-800 text-white text-xs font-bold px-2 py-0.5 rounded">
@@ -74,8 +75,9 @@
                                 @else
                                     <span class="shrink-0 text-gray-300 text-xs">vs</span>
                                 @endif
-                                <span class="flex-1 text-sm font-semibold text-gray-800 truncate text-right">
-                                    {{ country_name($match->away_team_code, $match->away_team) }} {{ get_flag($match->away_team_code) }}
+                                <span class="flex-1 flex items-center justify-end gap-1 min-w-0 text-sm font-semibold text-gray-800">
+                                    <span class="truncate text-right">{{ country_name($match->away_team_code, $match->away_team) }}</span>
+                                    <span class="shrink-0">{{ get_flag($match->away_team_code) }}</span>
                                 </span>
                             </div>
 

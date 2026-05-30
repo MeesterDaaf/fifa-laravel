@@ -110,12 +110,14 @@
                         <a href="/voorspellingen/{{ $match->id }}" class="block bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:border-green-300 hover:shadow-md transition-all">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-2 flex-1 min-w-0">
-                                    <span class="text-sm font-semibold text-gray-800 truncate">
-                                        {{ get_flag($match->home_team_code) }} {{ country_name($match->home_team_code, $match->home_team) }}
+                                    <span class="flex items-center gap-1 min-w-0 text-sm font-semibold text-gray-800">
+                                        <span class="shrink-0">{{ get_flag($match->home_team_code) }}</span>
+                                        <span class="truncate">{{ country_name($match->home_team_code, $match->home_team) }}</span>
                                     </span>
                                     <span class="text-gray-400 text-xs font-bold shrink-0">vs</span>
-                                    <span class="text-sm font-semibold text-gray-800 truncate text-right">
-                                        {{ country_name($match->away_team_code, $match->away_team) }} {{ get_flag($match->away_team_code) }}
+                                    <span class="flex items-center justify-end gap-1 min-w-0 text-sm font-semibold text-gray-800">
+                                        <span class="truncate text-right">{{ country_name($match->away_team_code, $match->away_team) }}</span>
+                                        <span class="shrink-0">{{ get_flag($match->away_team_code) }}</span>
                                     </span>
                                 </div>
                                 <div class="text-right flex-shrink-0">
