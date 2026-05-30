@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Fixture;
 use App\Models\Prediction;
+use App\Models\Setting;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -49,6 +50,11 @@ class AppServiceProvider extends ServiceProvider
             }
 
             $view->with(compact('next', 'predictedIds', 'todoCount'));
+        });
+
+        // WhatsApp-groepslink beschikbaar in de hoofdlayout (elke pagina).
+        View::composer('layouts.app', function ($view) {
+            $view->with('whatsappGroupUrl', auth()->check() ? Setting::whatsappGroupUrl() : null);
         });
     }
 }
