@@ -96,7 +96,7 @@
                 <div class="flex items-center gap-4 mb-4">
                     <div class="flex-1 text-center">
                         <label class="block text-xs text-gray-500 mb-1">{{ country_name($fixture->home_team_code, $fixture->home_team) }}</label>
-                        <input type="number" name="home_score" min="0" max="30"
+                        <input type="number" name="home_score" min="0" max="30" inputmode="numeric"
                             value="{{ old('home_score', $myPrediction?->home_score ?? '') }}"
                             class="w-full text-center text-2xl font-bold border-2 border-gray-200 rounded-xl py-3 focus:outline-none focus:border-green-500"
                             placeholder="0" required>
@@ -104,7 +104,7 @@
                     <div class="text-xl font-bold text-gray-400">-</div>
                     <div class="flex-1 text-center">
                         <label class="block text-xs text-gray-500 mb-1">{{ country_name($fixture->away_team_code, $fixture->away_team) }}</label>
-                        <input type="number" name="away_score" min="0" max="30"
+                        <input type="number" name="away_score" min="0" max="30" inputmode="numeric"
                             value="{{ old('away_score', $myPrediction?->away_score ?? '') }}"
                             class="w-full text-center text-2xl font-bold border-2 border-gray-200 rounded-xl py-3 focus:outline-none focus:border-green-500"
                             placeholder="0" required>
@@ -113,7 +113,7 @@
 
                 <div class="mb-4">
                     <label class="block text-xs text-gray-500 mb-1">⚽ 1e doelpunt (minuut, optioneel)</label>
-                    <input type="number" name="first_goal_minute" min="1" max="120"
+                    <input type="number" name="first_goal_minute" min="1" max="120" inputmode="numeric"
                         value="{{ old('first_goal_minute', $myPrediction?->first_goal_minute) }}"
                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-green-500"
                         placeholder="bv. 23">
@@ -135,14 +135,14 @@
 
             @if($nextFixture)
                 <a href="/voorspellingen/{{ $nextFixture->id }}" id="nextMatchLink"
-                    class="{{ $myPrediction ? '' : 'hidden' }} flex items-center justify-center gap-1 text-sm text-gray-400 hover:text-green-600 mt-3 transition-colors">
+                    class="{{ $myPrediction ? '' : 'hidden' }} flex items-center justify-center gap-1 text-sm text-gray-400 hover:text-green-600 mt-3 transition-colors rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-300 focus:text-green-700">
                     Volgende wedstrijd:
                     <span class="font-medium">{{ get_flag($nextFixture->home_team_code) }} {{ $nextFixture->home_team_code }}–{{ $nextFixture->away_team_code }} {{ get_flag($nextFixture->away_team_code) }}</span>
                     →
                 </a>
             @else
                 <a href="/voorspellingen" id="nextMatchLink"
-                    class="{{ $myPrediction ? '' : 'hidden' }} block text-center text-sm text-gray-400 hover:text-green-600 mt-3 transition-colors">
+                    class="{{ $myPrediction ? '' : 'hidden' }} block text-center text-sm text-gray-400 hover:text-green-600 mt-3 transition-colors rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-300 focus:text-green-700">
                     ✓ Alles voorspeld — terug naar overzicht
                 </a>
             @endif
@@ -179,7 +179,14 @@
                         if (res.ok) {
                             const t = new Date().toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
                             setStatus('✓ Automatisch opgeslagen om ' + t, 'text-green-600');
-                            document.getElementById('nextMatchLink')?.classList.remove('hidden');
+                            const next = document.getElementById('nextMatchLink');
+                            next?.classList.remove('hidden');
+                            // Alleen na een expliciete opslag (knop) de focus verplaatsen,
+                            // niet tijdens het typen — anders springt de focus uit het veld.
+                            if (!silent && next) {
+                                next.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                next.focus();
+                            }
                         } else {
                             setStatus('⚠️ ' + (data.message || 'Opslaan mislukt'), 'text-red-500');
                         }
