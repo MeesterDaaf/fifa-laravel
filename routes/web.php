@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DeelnemersController;
+use App\Http\Controllers\GroepenController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RanglijstController;
@@ -20,6 +21,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/', [HomeController::class, 'index']);
     Route::get('/ranglijst', [RanglijstController::class, 'index']);
+    Route::get('/groepen', [GroepenController::class, 'index']);
     Route::get('/voorspellingen', [VoorspellingenController::class, 'index']);
     Route::get('/voorspellingen/{id}', [VoorspellingenController::class, 'show']);
     Route::post('/voorspellingen/{id}', [VoorspellingenController::class, 'store']);

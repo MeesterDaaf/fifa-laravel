@@ -120,6 +120,20 @@ if (! function_exists('country_name')) {
     }
 }
 
+if (! function_exists('group_label')) {
+    /** "GROUP_A" → "Groep A"; lege/onbekende waarde → ''. */
+    function group_label(?string $group): string
+    {
+        if (! $group) {
+            return '';
+        }
+        if (str_starts_with($group, 'GROUP_')) {
+            return 'Groep '.substr($group, 6);
+        }
+        return $group;
+    }
+}
+
 if (! function_exists('format_date')) {
     function format_date(\Carbon\Carbon|string $date): string
     {

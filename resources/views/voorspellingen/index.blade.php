@@ -65,7 +65,7 @@
                         </div>
 
                         @if($match->match_group)
-                            <div class="mt-1 text-xs text-gray-400">Groep {{ $match->match_group }}</div>
+                            <div class="mt-1 text-xs text-gray-400">{{ group_label($match->match_group) }}</div>
                         @endif
                     </a>
                 @endforeach

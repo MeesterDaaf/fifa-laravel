@@ -29,7 +29,7 @@
         </div>
 
         @if($fixture->match_group)
-            <div class="text-center text-green-300 text-xs mt-3">Groep {{ $fixture->match_group }}</div>
+            <div class="text-center text-green-300 text-xs mt-3">{{ group_label($fixture->match_group) }}</div>
         @endif
 
         @if($fixture->isFinished() && $fixture->first_goal_minute !== null)
