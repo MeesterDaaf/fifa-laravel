@@ -90,7 +90,7 @@
             </h3>
             <p class="text-xs text-gray-400 mb-4">⏳ Voorspellen kan tot {{ format_date($fixture->locksAt()) }} ({{ \App\Models\Fixture::LOCK_MINUTES }} min vóór aanvang)</p>
 
-            <form method="POST" action="/voorspellingen/{{ $fixture->id }}">
+            <form method="POST" action="/voorspellingen/{{ $fixture->id }}" id="predictionForm">
                 @csrf
 
                 <div class="flex items-center gap-4 mb-4">
@@ -129,7 +129,82 @@
                     class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition-colors">
                     {{ $myPrediction ? '✅ Voorspelling opslaan' : '⚽ Voorspelling opslaan' }}
                 </button>
+
+                <p id="autosaveStatus" class="text-center text-xs text-gray-400 mt-2 h-4" aria-live="polite"></p>
             </form>
+
+            @if($nextFixture)
+                <a href="/voorspellingen/{{ $nextFixture->id }}" id="nextMatchLink"
+                    class="{{ $myPrediction ? '' : 'hidden' }} flex items-center justify-center gap-1 text-sm text-gray-400 hover:text-green-600 mt-3 transition-colors">
+                    Volgende wedstrijd:
+                    <span class="font-medium">{{ get_flag($nextFixture->home_team_code) }} {{ $nextFixture->home_team_code }}–{{ $nextFixture->away_team_code }} {{ get_flag($nextFixture->away_team_code) }}</span>
+                    →
+                </a>
+            @else
+                <a href="/voorspellingen" id="nextMatchLink"
+                    class="{{ $myPrediction ? '' : 'hidden' }} block text-center text-sm text-gray-400 hover:text-green-600 mt-3 transition-colors">
+                    ✓ Alles voorspeld — terug naar overzicht
+                </a>
+            @endif
+
+            <script>
+            (function () {
+                const form = document.getElementById('predictionForm');
+                if (!form) return;
+                const status = document.getElementById('autosaveStatus');
+                const fields = form.querySelectorAll('input[name="home_score"], input[name="away_score"], input[name="first_goal_minute"]');
+                let timer = null;
+
+                function setStatus(text, color) {
+                    status.textContent = text;
+                    status.className = 'text-center text-xs mt-2 h-4 ' + (color || 'text-gray-400');
+                }
+
+                async function save(silent) {
+                    const home = form.querySelector('input[name="home_score"]').value;
+                    const away = form.querySelector('input[name="away_score"]').value;
+                    // Beide scores nodig; bij autosave wachten we tot ze ingevuld zijn.
+                    if (home === '' || away === '') {
+                        if (!silent) setStatus('Vul beide scores in', 'text-orange-500');
+                        return;
+                    }
+                    setStatus('Opslaan…', 'text-gray-400');
+                    try {
+                        const res = await fetch(form.action, {
+                            method: 'POST',
+                            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                            body: new FormData(form),
+                        });
+                        const data = await res.json().catch(() => ({}));
+                        if (res.ok) {
+                            const t = new Date().toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+                            setStatus('✓ Automatisch opgeslagen om ' + t, 'text-green-600');
+                            document.getElementById('nextMatchLink')?.classList.remove('hidden');
+                        } else {
+                            setStatus('⚠️ ' + (data.message || 'Opslaan mislukt'), 'text-red-500');
+                        }
+                    } catch (e) {
+                        setStatus('⚠️ Geen verbinding — niet opgeslagen', 'text-red-500');
+                    }
+                }
+
+                // Auto-opslaan tijdens typen (met kleine vertraging).
+                fields.forEach(function (el) {
+                    el.addEventListener('input', function () {
+                        clearTimeout(timer);
+                        timer = setTimeout(() => save(true), 700);
+                    });
+                    el.addEventListener('change', () => { clearTimeout(timer); save(true); });
+                });
+
+                // De knop blijft werken: met JS slaat 'ie via AJAX op (geen herlaad).
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    clearTimeout(timer);
+                    save(false);
+                });
+            })();
+            </script>
         </div>
     @endif
 

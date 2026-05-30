@@ -44,7 +44,15 @@ class VoorspellingenController extends Controller
 
         $probability = $this->probability->forFixture($fixture);
 
-        return view('voorspellingen.show', compact('fixture', 'myPrediction', 'allPredictions', 'probability'));
+        // Eerstvolgende nog-open wedstrijd die deze gebruiker nog niet voorspeld heeft.
+        $predictedIds = Prediction::where('user_id', $user->id)->pluck('fixture_id');
+        $nextFixture = Fixture::openForPredictions()
+            ->where('id', '!=', $fixture->id)
+            ->whereNotIn('id', $predictedIds)
+            ->orderBy('scheduled_at')
+            ->first();
+
+        return view('voorspellingen.show', compact('fixture', 'myPrediction', 'allPredictions', 'probability', 'nextFixture'));
     }
 
     public function store(Request $request, int $id)
@@ -52,9 +60,13 @@ class VoorspellingenController extends Controller
         $fixture = Fixture::findOrFail($id);
 
         if (! $fixture->isOpen()) {
+            if ($request->wantsJson()) {
+                return response()->json(['ok' => false, 'message' => 'Voorspelling is gesloten.'], 422);
+            }
             return back()->with('error', 'Voorspelling is gesloten.');
         }
 
+        // Bij autosave (AJAX) mogen lege scores nog → dan slaan we niet op, geen fout.
         $data = $request->validate([
             'home_score'        => 'required|integer|min:0|max:30',
             'away_score'        => 'required|integer|min:0|max:30',
@@ -65,6 +77,10 @@ class VoorspellingenController extends Controller
             ['user_id' => auth()->id(), 'fixture_id' => $id],
             $data
         );
+
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true, 'message' => 'Automatisch opgeslagen']);
+        }
 
         return redirect("/voorspellingen/{$id}")->with('success', 'Voorspelling opgeslagen! ✅');
     }
