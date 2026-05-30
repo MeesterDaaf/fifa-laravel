@@ -134,10 +134,19 @@ if (! function_exists('group_label')) {
     }
 }
 
+if (! function_exists('to_nl_time')) {
+    /** Zet een (in UTC opgeslagen) tijd om naar Nederlandse tijd voor weergave. */
+    function to_nl_time(\Carbon\Carbon|string $date): \Carbon\Carbon
+    {
+        $d = $date instanceof \Carbon\Carbon ? $date->copy() : \Carbon\Carbon::parse($date);
+        return $d->setTimezone('Europe/Amsterdam');
+    }
+}
+
 if (! function_exists('format_date')) {
     function format_date(\Carbon\Carbon|string $date): string
     {
-        $d = $date instanceof \Carbon\Carbon ? $date : \Carbon\Carbon::parse($date);
+        $d = to_nl_time($date);
         $days = [
             'Monday' => 'maandag', 'Tuesday' => 'dinsdag', 'Wednesday' => 'woensdag',
             'Thursday' => 'donderdag', 'Friday' => 'vrijdag', 'Saturday' => 'zaterdag', 'Sunday' => 'zondag',
@@ -158,7 +167,7 @@ if (! function_exists('format_day')) {
     /** Nederlandse datum zonder tijd, bijv. "donderdag 11 juni". */
     function format_day(\Carbon\Carbon|string $date): string
     {
-        $d = $date instanceof \Carbon\Carbon ? $date : \Carbon\Carbon::parse($date);
+        $d = to_nl_time($date);
         $days = [
             'Monday' => 'maandag', 'Tuesday' => 'dinsdag', 'Wednesday' => 'woensdag',
             'Thursday' => 'donderdag', 'Friday' => 'vrijdag', 'Saturday' => 'zaterdag', 'Sunday' => 'zondag',
@@ -178,7 +187,7 @@ if (! function_exists('format_day')) {
 if (! function_exists('format_date_short')) {
     function format_date_short(\Carbon\Carbon|string $date): string
     {
-        $d = $date instanceof \Carbon\Carbon ? $date : \Carbon\Carbon::parse($date);
+        $d = to_nl_time($date);
         $months = [
             'Jan' => 'jan', 'Feb' => 'feb', 'Mar' => 'mrt', 'Apr' => 'apr',
             'May' => 'mei', 'Jun' => 'jun', 'Jul' => 'jul', 'Aug' => 'aug',

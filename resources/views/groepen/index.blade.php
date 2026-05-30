@@ -73,7 +73,7 @@
                             @if($m->isFinished())
                                 <span class="shrink-0 font-bold text-gray-800 bg-gray-100 px-2 py-0.5 rounded">{{ $m->home_score }}-{{ $m->away_score }}</span>
                             @else
-                                <span class="shrink-0 text-gray-400">{{ $m->scheduled_at->format('d/m H:i') }}</span>
+                                <span class="shrink-0 text-gray-400">{{ to_nl_time($m->scheduled_at)->format('d/m H:i') }}</span>
                             @endif
                             <span class="flex-1 truncate text-gray-700">{{ get_flag($m->away_team_code) }} {{ country_name($m->away_team_code, $m->away_team) }}</span>
                         </a>

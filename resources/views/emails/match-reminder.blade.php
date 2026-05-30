@@ -7,7 +7,7 @@ Je hebt de volgende wedstrijd{{ $matches->count() > 1 ? 'en' : '' }} van **{{ fo
 | Wedstrijd | Aftrap |
 | :-------- | :----- |
 @foreach($matches as $match)
-| {{ country_name($match->home_team_code, $match->home_team) }} – {{ country_name($match->away_team_code, $match->away_team) }} | {{ $match->scheduled_at->format('H:i') }} |
+| {{ country_name($match->home_team_code, $match->home_team) }} – {{ country_name($match->away_team_code, $match->away_team) }} | {{ to_nl_time($match->scheduled_at)->format('H:i') }} |
 @endforeach
 </x-mail::table>
 
