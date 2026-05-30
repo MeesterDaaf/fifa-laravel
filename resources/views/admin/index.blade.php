@@ -215,14 +215,14 @@
                 </div>
                 <div>
                     <label class="block text-xs text-gray-500 mb-1">🟨 Totaal gele kaarten</label>
-                    <input type="number" name="total_yellow_cards" min="0" max="2000"
+                    <input type="number" inputmode="numeric" name="total_yellow_cards" min="0" max="2000"
                         value="{{ old('total_yellow_cards', $tournamentResult?->total_yellow_cards) }}"
                         placeholder="bv. 220"
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
                 </div>
                 <div>
                     <label class="block text-xs text-gray-500 mb-1">🟥 Totaal rode kaarten</label>
-                    <input type="number" name="total_red_cards" min="0" max="500"
+                    <input type="number" inputmode="numeric" name="total_red_cards" min="0" max="500"
                         value="{{ old('total_red_cards', $tournamentResult?->total_red_cards) }}"
                         placeholder="bv. 12"
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
@@ -289,21 +289,21 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs text-gray-500 mb-1">{{ country_name($fixture->home_team_code, $fixture->home_team) }} score</label>
-                                    <input type="number" name="home_score" min="0"
+                                    <input type="number" inputmode="numeric" name="home_score" min="0"
                                         value="{{ $fixture->home_score }}"
                                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-green-500"
                                         placeholder="0">
                                 </div>
                                 <div>
                                     <label class="block text-xs text-gray-500 mb-1">{{ country_name($fixture->away_team_code, $fixture->away_team) }} score</label>
-                                    <input type="number" name="away_score" min="0"
+                                    <input type="number" inputmode="numeric" name="away_score" min="0"
                                         value="{{ $fixture->away_score }}"
                                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-green-500"
                                         placeholder="0">
                                 </div>
                                 <div>
                                     <label class="block text-xs text-gray-500 mb-1">1e doelpunt (min.)</label>
-                                    <input type="number" name="first_goal_minute" min="1" max="120"
+                                    <input type="number" inputmode="numeric" name="first_goal_minute" min="1" max="120"
                                         value="{{ $fixture->first_goal_minute }}"
                                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-green-500"
                                         placeholder="bv. 23">

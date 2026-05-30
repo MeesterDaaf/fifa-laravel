@@ -106,14 +106,14 @@
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">🟨 Totaal gele kaarten</label>
-                    <input type="number" name="total_yellow_cards" min="0" max="2000"
+                    <input type="number" inputmode="numeric" name="total_yellow_cards" min="0" max="2000"
                         value="{{ old('total_yellow_cards', $myPrediction?->total_yellow_cards) }}"
                         placeholder="bv. 220"
                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">🟥 Totaal rode kaarten</label>
-                    <input type="number" name="total_red_cards" min="0" max="500"
+                    <input type="number" inputmode="numeric" name="total_red_cards" min="0" max="500"
                         value="{{ old('total_red_cards', $myPrediction?->total_red_cards) }}"
                         placeholder="bv. 12"
                         class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500">
