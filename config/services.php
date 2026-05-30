@@ -29,8 +29,10 @@ return [
     ],
 
     'anthropic' => [
-        'key'   => env('ANTHROPIC_API_KEY', ''),
-        'model' => env('ANTHROPIC_MODEL', 'claude-haiku-4-5-20251001'),
+        'key'              => env('ANTHROPIC_API_KEY', ''),
+        'model'            => env('ANTHROPIC_MODEL', 'claude-haiku-4-5-20251001'),
+        // AI-onderbouwing staat uit tot we het met echte data kunnen doen.
+        'reasoning_enabled' => env('AI_REASONING', false),
     ],
 
 ];

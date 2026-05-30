@@ -22,7 +22,10 @@ class AiPredictionService
     private const YELLOW_PER_MATCH = 3.5;
     private const RED_PER_MATCH = 0.18;
 
-    public function __construct(private AiReasoningService $reasoning) {}
+    public function __construct(
+        private AiReasoningService $reasoning,
+        private ProbabilityService $probability,
+    ) {}
 
     /** Doet alle openstaande voorspellingen. Geeft tellingen terug. */
     public function run(): array
@@ -31,6 +34,64 @@ class AiPredictionService
         $tournament = $this->predictTournament();
 
         return ['matches' => $matches, 'tournament' => $tournament];
+    }
+
+    /**
+     * Vult de onderbouwing (ai_reasoning) aan voor bestaande bot-voorspellingen
+     * die er nog geen hebben. Handig nadat de ANTHROPIC_API_KEY is ingesteld.
+     * Geeft het aantal bijgewerkte voorspellingen terug.
+     */
+    public function backfillReasoning(?int $limit = null, bool $force = false): int
+    {
+        if (! $this->reasoning->enabled()) {
+            return 0;
+        }
+
+        $bot = $this->bot();
+        $count = 0;
+
+        // Wedstrijdvoorspellingen (zonder onderbouwing, of alle bij --force).
+        $query = Prediction::with('fixture')->where('user_id', $bot->id);
+        if (! $force) {
+            $query->whereNull('ai_reasoning');
+        }
+        if ($limit) {
+            $query->limit($limit);
+        }
+
+        foreach ($query->get() as $pred) {
+            if (! $pred->fixture) {
+                continue;
+            }
+            $text = $this->reasoning->reason($this->matchPrompt($pred->fixture, [
+                'home' => $pred->home_score,
+                'away' => $pred->away_score,
+            ]));
+            if ($text) {
+                $pred->update(['ai_reasoning' => $text]);
+                $count++;
+            }
+        }
+
+        // Toernooivoorspelling (zonder onderbouwing, of bij --force).
+        if (! $limit || $count < $limit) {
+            $tpQuery = TournamentPrediction::where('user_id', $bot->id);
+            if (! $force) {
+                $tpQuery->whereNull('ai_reasoning');
+            }
+            $tp = $tpQuery->first();
+            if ($tp) {
+                $text = $this->reasoning->reason($this->tournamentPrompt(
+                    $tp->champion, $tp->top_scorer, $tp->total_yellow_cards, $tp->total_red_cards
+                ));
+                if ($text) {
+                    $tp->update(['ai_reasoning' => $text]);
+                    $count++;
+                }
+            }
+        }
+
+        return $count;
     }
 
     /** De bot-gebruiker (wordt aangemaakt als die nog niet bestaat). */
@@ -230,16 +291,43 @@ class AiPredictionService
     {
         $home = country_name($fixture->home_team_code, $fixture->home_team);
         $away = country_name($fixture->away_team_code, $fixture->away_team);
+        $eloHome = $this->elo($fixture->home_team_code);
+        $eloAway = $this->elo($fixture->away_team_code);
+        $p = $this->probability->forFixture($fixture);
 
-        return "Wedstrijd: {$home} - {$away} ({$fixture->stageLabel()}). "
-            ."Voorspelde uitslag: {$score['home']}-{$score['away']}. "
-            .'Geef in één korte, eigenwijze Nederlandse zin (max 25 woorden) de onderbouwing. Noem beide landen.';
+        return "Onderbouw deze voorspelling op basis van uitsluitend onderstaande cijfers:\n"
+            ."- Wedstrijd: {$home} vs {$away} ({$fixture->stageLabel()})\n"
+            ."- Elo-rating: {$home} {$eloHome}, {$away} {$eloAway}\n"
+            ."- Modelkansen: {$home} winst {$p['home']}%, gelijk {$p['draw']}%, {$away} winst {$p['away']}%\n"
+            ."- Voorspelde uitslag: {$score['home']}-{$score['away']}\n"
+            .'Schrijf één korte Nederlandse zin (max 25 woorden) die de uitslag verklaart vanuit het Elo-verschil en de kansen. Noem beide landen.';
     }
 
-    private function tournamentPrompt(string $champion, ?string $topScorer, int $yellow, int $red): string
+    private function tournamentPrompt(string $champion, ?string $topScorer, ?int $yellow, ?int $red): string
     {
-        return "Toernooivoorspelling: kampioen {$champion}, topscorer {$topScorer}, "
-            ."{$yellow} gele en {$red} rode kaarten in het hele toernooi. "
-            .'Geef in één korte, eigenwijze Nederlandse zin (max 30 woorden) de onderbouwing.';
+        $matchCount = max(1, Fixture::count());
+
+        // Feitelijke basis opzoeken bij de opgeslagen waarden.
+        $championElo = null;
+        foreach (Team::all() as $t) {
+            if (country_name($t->tla, $t->name) === $champion) {
+                $championElo = $this->elo($t->tla);
+                break;
+            }
+        }
+
+        $scorerContext = $topScorer ?? 'onbekend';
+        if ($topScorer && $player = Player::where('name', $topScorer)->first()) {
+            $team = $player->team;
+            $teamName = $team ? country_name($team->tla, $team->name) : '';
+            $scorerContext = trim("{$topScorer} ({$player->position}, {$teamName})");
+        }
+
+        return "Onderbouw deze toernooivoorspelling op basis van uitsluitend onderstaande feiten:\n"
+            ."- Kampioen: {$champion}".($championElo ? " (hoogste Elo-rating: {$championElo})" : '')."\n"
+            ."- Topscorer: {$scorerContext} — gekozen als aanvaller van een topland\n"
+            ."- Gele kaarten: {$yellow} (≈ ".self::YELLOW_PER_MATCH." per wedstrijd × {$matchCount} wedstrijden)\n"
+            ."- Rode kaarten: {$red} (≈ ".self::RED_PER_MATCH." per wedstrijd × {$matchCount} wedstrijden)\n"
+            .'Schrijf één korte Nederlandse zin (max 35 woorden) die deze keuzes verklaart vanuit de ratings en de gemiddelden. Verzin geen extra feiten.';
     }
 }

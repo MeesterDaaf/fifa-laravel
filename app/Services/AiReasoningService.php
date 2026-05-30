@@ -12,13 +12,17 @@ use Illuminate\Support\Facades\Log;
  */
 class AiReasoningService
 {
-    private const PERSONA = 'Je bent een eigenwijze maar deskundige Nederlandse voetbalanalist '
-        .'in een voorspelpool. Je geeft korte, gevatte onderbouwingen bij voorspelde uitslagen. '
-        .'Schrijf altijd in het Nederlands, maximaal één zin, zonder aanhef en zonder aanhalingstekens.';
+    private const PERSONA = 'Je bent een nuchtere Nederlandse voetbalanalist in een voorspelpool. '
+        .'Je onderbouwt voorspellingen UITSLUITEND met de cijfers die je krijgt aangereikt '
+        .'(Elo-ratings, win/gelijk/verlies-kansen, gemiddelden). '
+        .'Je verzint NOOIT feiten over tactiek, blessures, vorm, transfers of historie — '
+        .'alleen wat uit de gegeven getallen volgt. Wees eerlijk dat het een statistische inschatting is. '
+        .'Schrijf in het Nederlands, maximaal één zin, zonder aanhef en zonder aanhalingstekens.';
 
     public function enabled(): bool
     {
-        return filled(config('services.anthropic.key'));
+        return (bool) config('services.anthropic.reasoning_enabled')
+            && filled(config('services.anthropic.key'));
     }
 
     public function reason(string $prompt): ?string
