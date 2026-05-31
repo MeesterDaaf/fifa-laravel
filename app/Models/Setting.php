@@ -11,7 +11,9 @@ class Setting extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = ['id', 'invite_code', 'whatsapp_group_url'];
+    protected $fillable = ['id', 'invite_code', 'whatsapp_group_url', 'ranking_captured_at'];
+
+    protected $casts = ['ranking_captured_at' => 'datetime'];
 
     public static function inviteCode(): string
     {

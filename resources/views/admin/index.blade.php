@@ -6,6 +6,42 @@
     <h1 class="text-2xl font-bold text-gray-800 mb-2">⚙️ Admin Panel</h1>
     <p class="text-gray-500 text-sm mb-6">{{ $totalUsers }} deelnemers geregistreerd</p>
 
+    {{-- Waarschuwing: speelronde voorbij, uitslagen wachten op invoer --}}
+    @if($awaitingResults->isNotEmpty())
+        <div class="bg-amber-50 border border-amber-300 rounded-2xl p-5 mb-6">
+            <h2 class="font-bold text-amber-800 flex items-center gap-2">
+                ⚠️ {{ $awaitingResults->count() }} wedstrijd{{ $awaitingResults->count() !== 1 ? 'en' : '' }} wacht{{ $awaitingResults->count() === 1 ? '' : 'en' }} op invoer
+            </h2>
+            <p class="text-sm text-amber-700 mt-1 mb-3">
+                Deze zijn gespeeld maar nog niet ingevoerd. <strong>Tip:</strong> leg eerst de ranglijst vast (knop hieronder), voer daarna de uitslagen in — dan kloppen de stijgers/dalers.
+            </p>
+            <ul class="text-sm text-amber-800 space-y-1">
+                @foreach($awaitingResults as $m)
+                    <li>{{ get_flag($m->home_team_code) }} {{ country_name($m->home_team_code, $m->home_team) }} – {{ country_name($m->away_team_code, $m->away_team) }} {{ get_flag($m->away_team_code) }} <span class="text-amber-600">({{ format_date($m->scheduled_at) }})</span></li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    {{-- Ranglijst-ijkpunt --}}
+    <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-2">📊 Ranglijst vastleggen</h2>
+        <p class="text-gray-500 text-sm mb-4">
+            Leg de huidige stand vast als ijkpunt; daarna tonen de stijgers/dalers (▲/▼) op de ranglijst de beweging sinds dit punt.
+            Doe dit aan het begin van een speelronde, vóór je de uitslagen invoert.
+            @if($rankingCapturedAt)
+                <br><span class="text-xs text-gray-400">Laatst vastgelegd: {{ format_date($rankingCapturedAt) }}</span>
+            @endif
+        </p>
+        <form method="POST" action="/admin/capture-ranking">
+            @csrf
+            <button type="submit"
+                class="bg-gray-800 hover:bg-gray-900 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
+                📸 Ranglijst vastleggen
+            </button>
+        </form>
+    </section>
+
     {{-- Vrienden uitnodigen --}}
     <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
         <h2 class="text-lg font-semibold text-gray-800 mb-4">👥 Vrienden uitnodigen</h2>

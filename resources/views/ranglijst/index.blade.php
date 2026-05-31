@@ -58,6 +58,11 @@
                         </span>
                         <span class="text-xs text-gray-400">
                             {{ $entry['predictionsCount'] }} voorspelling{{ $entry['predictionsCount'] !== 1 ? 'en' : '' }}
+                            @if(!is_null($entry['movement']) && $entry['movement'] !== 0)
+                                <span class="ml-1 font-semibold {{ $entry['movement'] > 0 ? 'text-green-600' : 'text-red-500' }}">
+                                    {{ $entry['movement'] > 0 ? '▲' : '▼' }}{{ abs($entry['movement']) }}
+                                </span>
+                            @endif
                         </span>
                     </div>
 

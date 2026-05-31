@@ -54,10 +54,13 @@ class HomeController extends Controller
 
         $whatsappGroupUrl = \App\Models\Setting::whatsappGroupUrl();
 
+        // Voor admins: aantal gespeelde wedstrijden dat nog op invoer wacht.
+        $awaitingResults = $user->is_admin ? Fixture::awaitingResult()->count() : 0;
+
         return view('home.index', compact(
             'upcoming', 'recent', 'myPredIds', 'leaderboard',
             'openCount', 'predictedCount', 'tournamentStatus', 'tournamentDone',
-            'whatsappGroupUrl'
+            'whatsappGroupUrl', 'awaitingResults'
         ));
     }
 }

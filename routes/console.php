@@ -18,3 +18,8 @@ Schedule::command('reminders:send')
 Schedule::command('ai:predict')
     ->dailyAt('12:00')
     ->timezone('Europe/Amsterdam');
+
+// Mailt de admin elke ochtend om 09:00 als er gespeelde wedstrijden op invoer wachten.
+Schedule::command('admin:awaiting-results')
+    ->dailyAt('09:00')
+    ->timezone('Europe/Amsterdam');

@@ -50,6 +50,13 @@ class Fixture extends Model
             ->where('scheduled_at', '>', now()->addMinutes(self::LOCK_MINUTES));
     }
 
+    /** Gespeelde wedstrijden waarvan de uitslag nog niet is ingevoerd (>2u na aftrap, nog SCHEDULED). */
+    public function scopeAwaitingResult($query)
+    {
+        return $query->where('status', 'SCHEDULED')
+            ->where('scheduled_at', '<', now()->subHours(2));
+    }
+
     public function stageLabel(): string
     {
         return match ($this->stage) {

@@ -105,7 +105,7 @@ class ScoringService
     {
         return User::where('is_admin', false)
             ->with(['predictions:user_id,total_points', 'tournamentPrediction:user_id,points'])
-            ->get(['id', 'name', 'is_bot'])
+            ->get(['id', 'name', 'is_bot', 'previous_rank'])
             ->map(function ($user) {
                 $matchPoints = $user->predictions->sum('total_points');
                 $tournamentPoints = $user->tournamentPrediction?->points ?? 0;
@@ -113,6 +113,7 @@ class ScoringService
                     'id'               => $user->id,
                     'name'             => $user->name,
                     'is_bot'           => $user->is_bot,
+                    'previous_rank'    => $user->previous_rank,
                     'matchPoints'      => $matchPoints,
                     'tournamentPoints' => $tournamentPoints,
                     'totalPoints'      => $matchPoints + $tournamentPoints,
@@ -121,7 +122,25 @@ class ScoringService
             })
             ->sortByDesc('totalPoints')
             ->values()
+            ->map(function ($entry, $i) {
+                $entry['rank'] = $i + 1;
+                // beweging t.o.v. het laatst vastgelegde ijkpunt (+ = gestegen)
+                $entry['movement'] = $entry['previous_rank'] !== null
+                    ? $entry['previous_rank'] - $entry['rank']
+                    : null;
+                return $entry;
+            })
             ->toArray();
+    }
+
+    /** Legt de huidige ranglijst vast als ijkpunt (voor de ▲/▼ pijltjes). */
+    public function captureRanking(): void
+    {
+        foreach ($this->getLeaderboard() as $entry) {
+            User::whereKey($entry['id'])->update(['previous_rank' => $entry['rank']]);
+        }
+
+        \App\Models\Setting::updateOrCreate(['id' => 'singleton'], ['ranking_captured_at' => now()]);
     }
 
     private function findBonusWinner(\Illuminate\Support\Collection $scored, ?int $actual, callable $getter): ?int

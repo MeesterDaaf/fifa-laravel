@@ -3,6 +3,13 @@
 @section('content')
 <div class="max-w-5xl mx-auto px-4 py-6 space-y-8">
 
+    @if(($awaitingResults ?? 0) > 0)
+        <a href="/admin" class="block bg-amber-50 border border-amber-300 rounded-2xl p-4 hover:bg-amber-100 transition-colors">
+            <span class="font-semibold text-amber-800">⚠️ {{ $awaitingResults }} gespeelde wedstrijd{{ $awaitingResults !== 1 ? 'en' : '' }} wacht{{ $awaitingResults === 1 ? '' : 'en' }} op invoer</span>
+            <span class="block text-sm text-amber-700">Ga naar het admin-paneel om de uitslagen in te voeren →</span>
+        </a>
+    @endif
+
     {{-- Hero --}}
     <div class="bg-gradient-to-r from-green-700 to-green-600 rounded-2xl p-6 text-white">
         <h1 class="text-2xl font-bold">Welkom, {{ auth()->user()->name }}! 👋</h1>

@@ -29,9 +29,14 @@ class AdminController extends Controller
         $whatsappGroupUrl = Setting::whatsappGroupUrl();
         $whatsappReminderText = app(\App\Services\ReminderService::class)->whatsappText();
 
+        // Gespeelde wedstrijden die nog op invoer wachten (speelronde voorbij).
+        $awaitingResults = Fixture::awaitingResult()->orderBy('scheduled_at')->get();
+        $rankingCapturedAt = Setting::firstOrCreate(['id' => 'singleton'])->ranking_captured_at;
+
         return view('admin.index', compact(
             'fixtures', 'tournamentResult', 'totalUsers', 'inviteCode', 'baseUrl',
-            'teams', 'users', 'whatsappGroupUrl', 'whatsappReminderText'
+            'teams', 'users', 'whatsappGroupUrl', 'whatsappReminderText',
+            'awaitingResults', 'rankingCapturedAt'
         ));
     }
 
@@ -136,6 +141,13 @@ class AdminController extends Controller
         return $ok
             ? back()->with('success', "Herinnering verstuurd naar {$user->name}. ✅")
             : back()->with('error', "Geen herinnering verstuurd — {$user->name} heeft alle wedstrijden van morgen al voorspeld (of er zijn er geen).");
+    }
+
+    public function captureRanking()
+    {
+        $this->scoring->captureRanking();
+
+        return back()->with('success', 'Ranglijst vastgelegd als ijkpunt. ✅ Voer nu de uitslagen in — de stijgers/dalers worden vanaf hier geteld.');
     }
 
     public function aiPredict(\App\Services\AiPredictionService $ai)

@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/invite/regenerate', [AdminController::class, 'regenerateInviteCode']);
         Route::post('/whatsapp', [AdminController::class, 'updateWhatsapp']);
         Route::post('/send-reminders', [AdminController::class, 'sendReminders']);
+        Route::post('/capture-ranking', [AdminController::class, 'captureRanking']);
         Route::post('/ai-predict', [AdminController::class, 'aiPredict']);
         Route::post('/users/{user}/remind', [AdminController::class, 'remindUser']);
         Route::post('/users/{user}/toggle-admin', [AdminController::class, 'toggleAdmin']);
