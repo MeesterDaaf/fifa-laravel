@@ -23,8 +23,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/ranglijst', [RanglijstController::class, 'index']);
     Route::get('/groepen', [GroepenController::class, 'index']);
     Route::get('/voorspellingen', [VoorspellingenController::class, 'index']);
-    Route::get('/voorspellingen/{id}', [VoorspellingenController::class, 'show']);
-    Route::post('/voorspellingen/{id}', [VoorspellingenController::class, 'store']);
+    Route::post('/voorspellingen/auto-fill', [VoorspellingenController::class, 'autoFill']);
+    Route::get('/voorspellingen/{id}', [VoorspellingenController::class, 'show'])->whereNumber('id');
+    Route::post('/voorspellingen/{id}', [VoorspellingenController::class, 'store'])->whereNumber('id');
     Route::get('/toernooi', [ToernooiController::class, 'index']);
     Route::post('/toernooi', [ToernooiController::class, 'store']);
     Route::get('/deelnemers', [DeelnemersController::class, 'index']);

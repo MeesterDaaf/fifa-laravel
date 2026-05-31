@@ -100,6 +100,17 @@
             </a>
 
         </div>
+
+        @if($openCount - $predictedCount > 0)
+            <form method="POST" action="/voorspellingen/auto-fill" class="mt-3"
+                onsubmit="return confirm('De nog-open wedstrijden die je nog niet hebt voorspeld worden automatisch ingevuld op basis van de kansberekening. Je kunt ze daarna nog aanpassen. Doorgaan?');">
+                @csrf
+                <button type="submit"
+                    class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm">
+                    ⚡ Vul mijn open wedstrijden automatisch in
+                </button>
+            </form>
+        @endif
     </div>
 
     <div class="grid md:grid-cols-2 gap-6">

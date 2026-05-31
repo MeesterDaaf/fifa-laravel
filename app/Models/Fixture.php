@@ -50,6 +50,14 @@ class Fixture extends Model
             ->where('scheduled_at', '>', now()->addMinutes(self::LOCK_MINUTES));
     }
 
+    /** Open wedstrijden mét bekende teams (TBD/knock-out zonder loting tellen niet mee). */
+    public function scopeOpenWithTeams($query)
+    {
+        return $query->openForPredictions()
+            ->where('home_team_code', '!=', 'TBD')
+            ->where('away_team_code', '!=', 'TBD');
+    }
+
     /** Gespeelde wedstrijden waarvan de uitslag nog niet is ingevoerd (>2u na aftrap, nog SCHEDULED). */
     public function scopeAwaitingResult($query)
     {

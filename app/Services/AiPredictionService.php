@@ -183,11 +183,7 @@ class AiPredictionService
      */
     public function scoreline(int $eloHome, int $eloAway): array
     {
-        $dr = $eloHome + config('elo.home_advantage') - $eloAway;
-        $ratio = pow(10, $dr / 400);
-
-        $lambdaHome = $this->clamp(self::GOALS_AVG * sqrt($ratio), 0.2, 4.5);
-        $lambdaAway = $this->clamp(self::GOALS_AVG / sqrt($ratio), 0.2, 4.5);
+        ['home' => $lambdaHome, 'away' => $lambdaAway] = $this->lambdas($eloHome, $eloAway);
 
         // Argmax over alle scores 0..6 van het product van de twee Poisson-kansen.
         $bestHome = 0;
@@ -204,10 +200,95 @@ class AiPredictionService
             }
         }
 
-        $goalMinute = (int) round(90 / ($lambdaHome + $lambdaAway + 1));
-        $goalMinute = (int) $this->clamp($goalMinute, 1, 90);
+        return ['home' => $bestHome, 'away' => $bestAway, 'first_goal_minute' => $this->goalMinute($lambdaHome, $lambdaAway)];
+    }
 
-        return ['home' => $bestHome, 'away' => $bestAway, 'first_goal_minute' => $goalMinute];
+    /** Verwachte doelpunten (λ) per team uit het Elo-verschil. */
+    private function lambdas(int $eloHome, int $eloAway): array
+    {
+        $dr = $eloHome + config('elo.home_advantage') - $eloAway;
+        $ratio = pow(10, $dr / 400);
+
+        return [
+            'home' => $this->clamp(self::GOALS_AVG * sqrt($ratio), 0.2, 4.5),
+            'away' => $this->clamp(self::GOALS_AVG / sqrt($ratio), 0.2, 4.5),
+        ];
+    }
+
+    private function goalMinute(float $lambdaHome, float $lambdaAway, int $jitter = 0): int
+    {
+        $minute = (int) round(90 / ($lambdaHome + $lambdaAway + 1)) + $jitter;
+
+        return (int) $this->clamp($minute, 1, 90);
+    }
+
+    /**
+     * Realistische maar gevarieerde eindstand: trekt uit de Poisson-verdeling
+     * rond de Elo-verwachting i.p.v. altijd de meest waarschijnlijke score.
+     * Gebruikt voor de "vul automatisch in"-knop, zodat niet iedereen identiek voorspelt.
+     *
+     * @return array{home:int, away:int, first_goal_minute:int}
+     */
+    public function variedScoreline(int $eloHome, int $eloAway): array
+    {
+        ['home' => $lambdaHome, 'away' => $lambdaAway] = $this->lambdas($eloHome, $eloAway);
+
+        return [
+            'home'              => min(7, $this->samplePoisson($lambdaHome)),
+            'away'              => min(7, $this->samplePoisson($lambdaAway)),
+            'first_goal_minute' => $this->goalMinute($lambdaHome, $lambdaAway, random_int(-8, 8)),
+        ];
+    }
+
+    /** Trekt een willekeurig aantal doelpunten uit een Poisson(λ) (Knuth). */
+    private function samplePoisson(float $lambda): int
+    {
+        $l = exp(-$lambda);
+        $k = 0;
+        $p = 1.0;
+        do {
+            $k++;
+            $p *= mt_rand() / mt_getrandmax();
+        } while ($p > $l);
+
+        return $k - 1;
+    }
+
+    /**
+     * Vult voor een gebruiker alle nog-open, nog-niet-voorspelde wedstrijden in
+     * met een realistische (gevarieerde) Elo-suggestie. Bestaande voorspellingen
+     * worden niet aangeraakt. Geeft het aantal ingevulde wedstrijden terug.
+     */
+    public function fillSuggestionsForUser(User $user): int
+    {
+        $predictedIds = Prediction::where('user_id', $user->id)->pluck('fixture_id');
+
+        $fixtures = Fixture::openForPredictions()
+            ->whereNotIn('id', $predictedIds)
+            ->get();
+
+        $count = 0;
+        foreach ($fixtures as $fixture) {
+            if (! $this->hasElo($fixture->home_team_code) || ! $this->hasElo($fixture->away_team_code)) {
+                continue; // TBD / onbekende teams overslaan
+            }
+
+            $s = $this->variedScoreline(
+                $this->elo($fixture->home_team_code),
+                $this->elo($fixture->away_team_code),
+            );
+
+            Prediction::create([
+                'user_id'           => $user->id,
+                'fixture_id'        => $fixture->id,
+                'home_score'        => $s['home'],
+                'away_score'        => $s['away'],
+                'first_goal_minute' => $s['first_goal_minute'],
+            ]);
+            $count++;
+        }
+
+        return $count;
     }
 
     private function poisson(int $k, float $lambda): float

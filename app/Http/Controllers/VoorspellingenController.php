@@ -23,7 +23,24 @@ class VoorspellingenController extends Controller
 
         $byStage = $fixtures->groupBy('stage');
 
-        return view('voorspellingen.index', compact('byStage', 'myPredictions'));
+        // Aantal nog-open wedstrijden mét bekende teams die de gebruiker nog niet voorspeld heeft.
+        $openUnpredicted = Fixture::openWithTeams()
+            ->whereNotIn('id', $myPredictions->keys())
+            ->count();
+
+        return view('voorspellingen.index', compact('byStage', 'myPredictions', 'openUnpredicted'));
+    }
+
+    public function autoFill(\App\Services\AiPredictionService $ai)
+    {
+        $count = $ai->fillSuggestionsForUser(auth()->user());
+
+        return redirect('/voorspellingen')->with(
+            $count > 0 ? 'success' : 'error',
+            $count > 0
+                ? "{$count} wedstrijd(en) automatisch ingevuld op basis van de kansberekening. Je kunt ze nog aanpassen! ⚡"
+                : 'Geen open wedstrijden om in te vullen (of je hebt ze al voorspeld).'
+        );
     }
 
     public function show(int $id)

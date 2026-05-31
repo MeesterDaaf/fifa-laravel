@@ -3,7 +3,24 @@
 @section('content')
 <div class="max-w-3xl mx-auto px-4 py-6">
 
-    <h1 class="text-2xl font-bold text-gray-800 mb-6">⚽ Wedstrijden &amp; Voorspellingen</h1>
+    <h1 class="text-2xl font-bold text-gray-800 mb-4">⚽ Wedstrijden &amp; Voorspellingen</h1>
+
+    @if(($openUnpredicted ?? 0) > 0)
+        <div class="bg-green-50 border border-green-200 rounded-2xl p-4 mb-6">
+            <p class="text-sm text-green-800 mb-3">
+                Geen tijd om alles los in te vullen? Laat de app je <strong>{{ $openUnpredicted }}</strong> nog-open
+                wedstrijd{{ $openUnpredicted !== 1 ? 'en' : '' }} realistisch invullen op basis van de kansberekening — daarna kun je alles nog aanpassen.
+            </p>
+            <form method="POST" action="/voorspellingen/auto-fill"
+                onsubmit="return confirm('De {{ $openUnpredicted }} nog-open wedstrijden die je nog niet hebt voorspeld worden automatisch ingevuld. Je kunt ze daarna nog aanpassen. Doorgaan?');">
+                @csrf
+                <button type="submit"
+                    class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
+                    ⚡ Vul mijn open wedstrijden automatisch in
+                </button>
+            </form>
+        </div>
+    @endif
 
     @if($byStage->isEmpty())
         <div class="bg-white rounded-2xl p-8 text-center shadow-sm">
