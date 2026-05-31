@@ -4,27 +4,27 @@
 <div class="max-w-2xl mx-auto px-4 py-6">
 
     {{-- Wedstrijd header --}}
-    <div class="bg-gradient-to-r from-green-700 to-green-600 rounded-2xl p-6 text-white mb-6">
-        <div class="text-sm text-green-200 mb-3">{{ format_date($fixture->scheduled_at) }}</div>
+    <div class="bg-gradient-to-r from-green-700 to-green-600 rounded-2xl p-4 sm:p-6 text-white mb-4">
+        <div class="text-xs sm:text-sm text-green-200 mb-2">{{ format_date($fixture->scheduled_at) }}</div>
         <div class="flex items-center justify-between gap-4">
 
             <div class="flex-1 text-center">
-                <div class="text-4xl mb-1">{{ get_flag($fixture->home_team_code) }}</div>
-                <div class="font-bold text-lg leading-tight">{{ country_name($fixture->home_team_code, $fixture->home_team) }}</div>
+                <div class="text-3xl sm:text-4xl mb-1">{{ get_flag($fixture->home_team_code) }}</div>
+                <div class="font-bold text-base sm:text-lg leading-tight">{{ country_name($fixture->home_team_code, $fixture->home_team) }}</div>
             </div>
 
             @if($fixture->isFinished())
                 <div class="text-center">
-                    <div class="text-4xl font-black">{{ $fixture->home_score }} - {{ $fixture->away_score }}</div>
+                    <div class="text-3xl sm:text-4xl font-black">{{ $fixture->home_score }} - {{ $fixture->away_score }}</div>
                     <div class="text-green-300 text-xs mt-1">Eindstand</div>
                 </div>
             @else
-                <div class="text-2xl font-bold text-green-300">VS</div>
+                <div class="text-xl sm:text-2xl font-bold text-green-300">VS</div>
             @endif
 
             <div class="flex-1 text-center">
-                <div class="text-4xl mb-1">{{ get_flag($fixture->away_team_code) }}</div>
-                <div class="font-bold text-lg leading-tight">{{ country_name($fixture->away_team_code, $fixture->away_team) }}</div>
+                <div class="text-3xl sm:text-4xl mb-1">{{ get_flag($fixture->away_team_code) }}</div>
+                <div class="font-bold text-base sm:text-lg leading-tight">{{ country_name($fixture->away_team_code, $fixture->away_team) }}</div>
             </div>
         </div>
 
@@ -42,53 +42,13 @@
         @endif
     </div>
 
-    {{-- Winkans (Elo-model) --}}
-    @if($probability['known'])
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
-            <div class="flex items-center justify-between mb-3">
-                <h3 class="font-semibold text-gray-700 text-sm">📊 Winkans</h3>
-                <span class="text-xs text-gray-400">Schatting o.b.v. Elo-rating</span>
-            </div>
-
-            <div class="flex items-center justify-between text-sm font-semibold mb-2">
-                <span class="text-green-700">{{ get_flag($fixture->home_team_code) }} {{ $probability['home'] }}%</span>
-                <span class="text-gray-500">Gelijk {{ $probability['draw'] }}%</span>
-                <span class="text-blue-700">{{ $probability['away'] }}% {{ get_flag($fixture->away_team_code) }}</span>
-            </div>
-
-            <div class="flex h-3 rounded-full overflow-hidden bg-gray-100">
-                <div class="bg-green-500" style="width: {{ $probability['home'] }}%"></div>
-                <div class="bg-gray-300" style="width: {{ $probability['draw'] }}%"></div>
-                <div class="bg-blue-500" style="width: {{ $probability['away'] }}%"></div>
-            </div>
-
-            <p class="text-xs text-gray-400 mt-3">
-                Let op: dit is een statistische schatting, geen garantie. Gebruik 'm als hulpmiddel bij je voorspelling.
-            </p>
-        </div>
-    @else
-        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 mb-6 text-center text-sm text-gray-400">
-            📊 Winkans nog niet beschikbaar — team(s) nog niet bekend
-        </div>
-    @endif
-
-    {{-- Puntensysteem --}}
-    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6 text-sm text-blue-800">
-        <p class="font-semibold mb-1">🎯 Puntensysteem</p>
-        <ul class="space-y-0.5 text-xs text-blue-700">
-            <li>⚽ Exacte uitslag: <strong>{{ config('scoring.match.exact') }} punten</strong></li>
-            <li>✅ Juiste winnaar/gelijkspel: <strong>{{ config('scoring.match.outcome') }} punten</strong></li>
-            <li>🕐 Dichtstbijzijnde 1e doelpuntminuut: <strong>+{{ config('scoring.match.goal_minute_bonus') }} bonuspunten</strong></li>
-        </ul>
-    </div>
-
     {{-- Voorspelformulier --}}
     @if($fixture->isOpen())
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
             <h3 class="font-semibold text-gray-700 mb-1">
                 {{ $myPrediction ? 'Voorspelling aanpassen' : 'Jouw voorspelling' }}
             </h3>
-            <p class="text-xs text-gray-400 mb-4">⏳ Voorspellen kan tot {{ format_date($fixture->locksAt()) }} ({{ \App\Models\Fixture::LOCK_MINUTES }} min vóór aanvang)</p>
+            <p class="text-xs text-gray-400 mb-4">⏳ Sluit {{ format_date($fixture->locksAt()) }}</p>
 
             <form method="POST" action="/voorspellingen/{{ $fixture->id }}" id="predictionForm">
                 @csrf
@@ -135,15 +95,15 @@
 
             @if($nextFixture)
                 <a href="/voorspellingen/{{ $nextFixture->id }}" id="nextMatchLink"
-                    class="{{ $myPrediction ? '' : 'hidden' }} flex items-center justify-center gap-1 text-sm text-gray-400 hover:text-green-600 mt-3 transition-colors rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-300 focus:text-green-700">
-                    Volgende wedstrijd:
-                    <span class="font-medium">{{ get_flag($nextFixture->home_team_code) }} {{ $nextFixture->home_team_code }}–{{ $nextFixture->away_team_code }} {{ get_flag($nextFixture->away_team_code) }}</span>
-                    →
+                    class="flex items-center justify-center gap-2 w-full mt-3 bg-white border-2 border-green-600 text-green-700 font-semibold py-3 rounded-xl hover:bg-green-50 transition-colors focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-1 {{ $myPrediction ? '' : 'hidden' }}">
+                    <span>Volgende wedstrijd</span>
+                    <span class="font-bold">{{ get_flag($nextFixture->home_team_code) }} {{ $nextFixture->home_team_code }}–{{ $nextFixture->away_team_code }} {{ get_flag($nextFixture->away_team_code) }}</span>
+                    <span aria-hidden="true">→</span>
                 </a>
             @else
                 <a href="/voorspellingen" id="nextMatchLink"
-                    class="{{ $myPrediction ? '' : 'hidden' }} block text-center text-sm text-gray-400 hover:text-green-600 mt-3 transition-colors rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-300 focus:text-green-700">
-                    ✓ Alles voorspeld — terug naar overzicht
+                    class="flex items-center justify-center gap-2 w-full mt-3 bg-white border-2 border-green-600 text-green-700 font-semibold py-3 rounded-xl hover:bg-green-50 transition-colors focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-1 {{ $myPrediction ? '' : 'hidden' }}">
+                    ✓ Alles voorspeld — naar overzicht
                 </a>
             @endif
 
@@ -220,6 +180,37 @@
             🔒 Voorspellen gesloten — sluit {{ \App\Models\Fixture::LOCK_MINUTES }} minuten vóór aanvang
         </div>
     @endif
+
+    {{-- Winkans (Elo-model) --}}
+    @if($probability['known'])
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="font-semibold text-gray-700 text-sm">📊 Winkans</h3>
+                <span class="text-xs text-gray-400">o.b.v. Elo-rating</span>
+            </div>
+            <div class="flex items-center justify-between text-sm font-semibold mb-2">
+                <span class="text-green-700">{{ get_flag($fixture->home_team_code) }} {{ $probability['home'] }}%</span>
+                <span class="text-gray-500">Gelijk {{ $probability['draw'] }}%</span>
+                <span class="text-blue-700">{{ $probability['away'] }}% {{ get_flag($fixture->away_team_code) }}</span>
+            </div>
+            <div class="flex h-3 rounded-full overflow-hidden bg-gray-100">
+                <div class="bg-green-500" style="width: {{ $probability['home'] }}%"></div>
+                <div class="bg-gray-300" style="width: {{ $probability['draw'] }}%"></div>
+                <div class="bg-blue-500" style="width: {{ $probability['away'] }}%"></div>
+            </div>
+            <p class="text-xs text-gray-400 mt-2">Statistische schatting — geen garantie.</p>
+        </div>
+    @endif
+
+    {{-- Puntensysteem --}}
+    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6 text-sm text-blue-800">
+        <p class="font-semibold mb-1">🎯 Puntensysteem</p>
+        <ul class="space-y-0.5 text-xs text-blue-700">
+            <li>⚽ Exacte uitslag: <strong>{{ config('scoring.match.exact') }} punten</strong></li>
+            <li>✅ Juiste winnaar/gelijkspel: <strong>{{ config('scoring.match.outcome') }} punten</strong></li>
+            <li>🕐 Dichtstbijzijnde 1e doelpuntminuut: <strong>+{{ config('scoring.match.goal_minute_bonus') }} bonuspunten</strong></li>
+        </ul>
+    </div>
 
     {{-- Jouw voorspelling (na sluiting) --}}
     @if($myPrediction && !$fixture->isOpen())
