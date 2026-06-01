@@ -207,10 +207,18 @@
                             @endif
                         </div>
                         <div class="text-xs text-gray-500 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
-                            <span>🏆 {{ $pred->champion ?? '—' }}</span>
-                            <span>🥇 {{ $pred->top_scorer ?? '—' }}</span>
-                            <span>🟨 {{ $pred->total_yellow_cards ?? '—' }}</span>
-                            <span>🟥 {{ $pred->total_red_cards ?? '—' }}</span>
+                            <span class="{{ $pred->points_champion > 0 ? 'text-green-600 font-semibold' : '' }}">
+                                🏆 {{ $pred->champion ?? '—' }}@if($pred->points_champion > 0) +{{ $pred->points_champion }}@endif
+                            </span>
+                            <span class="{{ $pred->points_top_scorer > 0 ? 'text-green-600 font-semibold' : '' }}">
+                                🥇 {{ $pred->top_scorer ?? '—' }}@if($pred->points_top_scorer > 0) +{{ $pred->points_top_scorer }}@endif
+                            </span>
+                            <span class="{{ $pred->points_yellow > 0 ? 'text-green-600 font-semibold' : '' }}">
+                                🟨 {{ $pred->total_yellow_cards ?? '—' }}@if($pred->points_yellow > 0) 🎯+{{ $pred->points_yellow }}@endif
+                            </span>
+                            <span class="{{ $pred->points_red > 0 ? 'text-green-600 font-semibold' : '' }}">
+                                🟥 {{ $pred->total_red_cards ?? '—' }}@if($pred->points_red > 0) 🎯+{{ $pred->points_red }}@endif
+                            </span>
                         </div>
                     </div>
                 @endforeach

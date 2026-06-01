@@ -78,33 +78,29 @@ class FootballApiService
         $count = 0;
 
         foreach ($matches as $match) {
-            Fixture::updateOrCreate(
-                ['external_id' => $match['id']],
-                [
-                    'home_team'      => $match['homeTeam']['name'] ?? 'TBD',
-                    'away_team'      => $match['awayTeam']['name'] ?? 'TBD',
-                    'home_team_code' => $match['homeTeam']['tla'] ?? 'TBD',
-                    'away_team_code' => $match['awayTeam']['tla'] ?? 'TBD',
-                    'scheduled_at'   => $match['utcDate'],
-                    'stage'          => $match['stage'],
-                    'match_group'    => $match['group'] ?? null,
-                    'status'         => $this->mapStatus($match['status']),
-                    'home_score'     => $match['score']['fullTime']['home'],
-                    'away_score'     => $match['score']['fullTime']['away'],
-                ]
-            );
+            // Alleen wedstrijd-metadata (teams, datum, fase, groep). Status en
+            // uitslagen blijven onaangeroerd — die voert de admin handmatig in,
+            // zodat de puntenberekening klopt en niets wordt overschreven.
+            $meta = [
+                'home_team'      => $match['homeTeam']['name'] ?? 'TBD',
+                'away_team'      => $match['awayTeam']['name'] ?? 'TBD',
+                'home_team_code' => $match['homeTeam']['tla'] ?? 'TBD',
+                'away_team_code' => $match['awayTeam']['tla'] ?? 'TBD',
+                'scheduled_at'   => $match['utcDate'],
+                'stage'          => $match['stage'],
+                'match_group'    => $match['group'] ?? null,
+            ];
+
+            $existing = Fixture::where('external_id', $match['id'])->first();
+
+            if ($existing) {
+                $existing->update($meta); // status/scores bewust niet bijwerken
+            } else {
+                Fixture::create($meta + ['external_id' => $match['id'], 'status' => 'SCHEDULED']);
+            }
             $count++;
         }
 
         return $count;
-    }
-
-    private function mapStatus(string $apiStatus): string
-    {
-        return match ($apiStatus) {
-            'FINISHED'       => 'FINISHED',
-            'IN_PLAY', 'PAUSED' => 'IN_PLAY',
-            default          => 'SCHEDULED',
-        };
     }
 }

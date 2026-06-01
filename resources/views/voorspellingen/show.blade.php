@@ -262,6 +262,9 @@
                     @if($pred->first_goal_minute !== null)
                         <span class="text-xs text-gray-500">⚽{{ $pred->first_goal_minute }}'</span>
                     @endif
+                    @if($pred->points_goal_minute > 0)
+                        <span class="text-xs font-semibold text-green-600" title="Dichtst bij de 1e doelpuntminuut">🎯+{{ $pred->points_goal_minute }}</span>
+                    @endif
                     <span class="font-bold text-green-700 w-12 text-right">{{ $pred->total_points }}pt</span>
                 </div>
             @endforeach
