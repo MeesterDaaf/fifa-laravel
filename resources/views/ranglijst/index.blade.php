@@ -32,10 +32,11 @@
                 <span class="w-16 text-right">Wedstr.</span>
                 <span class="w-16 text-right">Toern.</span>
                 <span class="w-16 text-right font-bold text-gray-700">Totaal</span>
+                <span class="w-2"></span>
             </div>
 
             @foreach($leaderboard as $i => $entry)
-                <div class="flex items-center gap-3 px-4 py-3.5 border-b border-gray-50 last:border-0 transition-colors
+                <a href="/deelnemers/{{ $entry['id'] }}" class="flex items-center gap-3 px-4 py-3.5 border-b border-gray-50 last:border-0 transition-colors
                     {{ $entry['id'] === $myId ? 'bg-green-50' : 'hover:bg-gray-50' }}">
 
                     <div class="w-7 flex-shrink-0">
@@ -71,7 +72,8 @@
                     <span class="w-16 text-right font-bold text-base {{ $i === 0 ? 'text-yellow-600' : 'text-green-700' }}">
                         {{ $entry['totalPoints'] }}pt
                     </span>
-                </div>
+                    <span class="w-2 text-center text-gray-300 shrink-0" aria-hidden="true">›</span>
+                </a>
             @endforeach
         </div>
     @endif
