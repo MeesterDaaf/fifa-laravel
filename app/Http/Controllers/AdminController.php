@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\FootballApiService;
 use App\Services\ScoringService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 
 class AdminController extends Controller
 {
@@ -141,6 +142,19 @@ class AdminController extends Controller
         return $ok
             ? back()->with('success', "Herinnering verstuurd naar {$user->name}. ✅")
             : back()->with('error', "Geen herinnering verstuurd — {$user->name} heeft alle wedstrijden van morgen al voorspeld (of er zijn er geen).");
+    }
+
+    public function sendPasswordReset(User $user)
+    {
+        if ($user->is_bot) {
+            return back()->with('error', 'Een bot-account heeft geen wachtwoord.');
+        }
+
+        $status = Password::sendResetLink(['email' => $user->email]);
+
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with('success', "Resetlink verstuurd naar {$user->name} ({$user->email}). ✅")
+            : back()->with('error', "Kon geen resetlink versturen naar {$user->name}. Probeer het zo opnieuw.");
     }
 
     public function captureRanking()

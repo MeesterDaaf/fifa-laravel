@@ -189,6 +189,14 @@
                                     ✉️ Herinner
                                 </button>
                             </form>
+                            {{-- Wachtwoord-resetlink sturen --}}
+                            <form method="POST" action="/admin/users/{{ $u->id }}/send-reset">
+                                @csrf
+                                <button type="submit" title="Stuur een resetlink naar {{ $u->email }}"
+                                    class="text-xs text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 rounded-lg px-3 py-1.5 transition-colors whitespace-nowrap">
+                                    🔑 Reset-link
+                                </button>
+                            </form>
                             {{-- Promoten / intrekken --}}
                             <form method="POST" action="/admin/users/{{ $u->id }}/toggle-admin">
                                 @csrf

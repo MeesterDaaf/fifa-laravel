@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Models\Fixture;
 use App\Models\Prediction;
 use App\Models\Setting;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,6 +25,23 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Nederlandse reset-mail (gebruikt door zowel self-service als de admin-knop).
+        ResetPassword::toMailUsing(function ($notifiable, string $token) {
+            $url = url(route('password.reset', [
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ], false));
+
+            return (new MailMessage)
+                ->subject('Wachtwoord resetten – FIFA 2026 Pool')
+                ->greeting('Hoi ' . $notifiable->name . ',')
+                ->line('Er is een verzoek gedaan om het wachtwoord van je account te resetten.')
+                ->action('Wachtwoord resetten', $url)
+                ->line('Deze link verloopt over 60 minuten.')
+                ->line('Heb je dit niet aangevraagd? Dan kun je deze e-mail negeren — er verandert niets.')
+                ->salutation('Groet, FIFA 2026 Pool ⚽');
+        });
+
         // Reminder-data voor de header: de eerstvolgende 3 wedstrijden + of de
         // ingelogde gebruiker ze al heeft voorspeld.
         View::composer('partials.reminder', function ($view) {

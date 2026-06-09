@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inloggen – FIFA 2026 Pool</title>
+    <title>Nieuw wachtwoord – FIFA 2026 Pool</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-gradient-to-br from-green-900 via-green-800 to-green-900 flex items-center justify-center p-4">
@@ -12,11 +12,11 @@
         <div class="text-center mb-8">
             <div class="text-6xl mb-3">⚽</div>
             <h1 class="text-3xl font-bold text-white">FIFA 2026 Pool</h1>
-            <p class="text-green-300 mt-1">Inloggen bij jouw pool</p>
+            <p class="text-green-300 mt-1">Nieuw wachtwoord instellen</p>
         </div>
 
         <div class="bg-white rounded-2xl shadow-2xl p-8">
-            <h2 class="text-xl font-semibold text-gray-800 mb-6">Inloggen</h2>
+            <h2 class="text-xl font-semibold text-gray-800 mb-6">Kies een nieuw wachtwoord</h2>
 
             @if($errors->any())
                 <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-4 text-sm">
@@ -24,21 +24,16 @@
                 </div>
             @endif
 
-            @if(session('status'))
-                <div class="bg-green-50 border border-green-200 text-green-800 rounded-lg px-4 py-3 mb-4 text-sm">
-                    {{ session('status') }}
-                </div>
-            @endif
-
-            <form method="POST" action="/login" class="space-y-4">
+            <form method="POST" action="/reset-password" class="space-y-4">
                 @csrf
+                <input type="hidden" name="token" value="{{ $token }}">
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">E-mailadres</label>
                     <input
                         type="email"
                         name="email"
-                        value="{{ old('email') }}"
+                        value="{{ old('email', $email) }}"
                         required
                         autofocus
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -47,14 +42,25 @@
                 </div>
 
                 <div>
-                    <div class="flex items-center justify-between mb-1">
-                        <label class="block text-sm font-medium text-gray-700">Wachtwoord</label>
-                        <a href="/forgot-password" class="text-xs text-green-600 hover:underline">Wachtwoord vergeten?</a>
-                    </div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nieuw wachtwoord</label>
                     <input
                         type="password"
                         name="password"
                         required
+                        minlength="6"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="••••••••"
+                    >
+                    <p class="text-xs text-gray-400 mt-1">Minimaal 6 tekens.</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Herhaal wachtwoord</label>
+                    <input
+                        type="password"
+                        name="password_confirmation"
+                        required
+                        minlength="6"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                         placeholder="••••••••"
                     >
@@ -64,13 +70,12 @@
                     type="submit"
                     class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors"
                 >
-                    Inloggen
+                    Wachtwoord opslaan
                 </button>
             </form>
 
             <p class="text-center text-sm text-gray-600 mt-6">
-                Nog geen account?
-                <a href="/register" class="text-green-600 font-medium hover:underline">Registreer hier</a>
+                <a href="/login" class="text-green-600 font-medium hover:underline">← Terug naar inloggen</a>
             </p>
         </div>
     </div>

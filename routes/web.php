@@ -16,6 +16,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
     Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
+
+    // Wachtwoord vergeten (self-service via e-mailresetlink).
+    Route::get('/forgot-password', [AuthController::class, 'forgotPasswordForm'])->name('password.request');
+    Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->middleware('throttle:5,1')->name('password.email');
+    Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordForm'])->name('password.reset');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->middleware('throttle:5,1')->name('password.update');
 });
 
 Route::middleware('auth')->group(function () {
@@ -47,6 +53,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/capture-ranking', [AdminController::class, 'captureRanking']);
         Route::post('/ai-predict', [AdminController::class, 'aiPredict']);
         Route::post('/users/{user}/remind', [AdminController::class, 'remindUser']);
+        Route::post('/users/{user}/send-reset', [AdminController::class, 'sendPasswordReset']);
         Route::post('/users/{user}/toggle-admin', [AdminController::class, 'toggleAdmin']);
         Route::delete('/users/{user}', [AdminController::class, 'deleteUser']);
     });
