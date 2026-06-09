@@ -10,34 +10,38 @@
         </a>
     @endif
 
-    {{-- Hero --}}
-    <div class="bg-gradient-to-r from-green-700 to-green-600 rounded-2xl p-6 text-white">
-        <h1 class="text-2xl font-bold">Welkom, {{ auth()->user()->name }}! 👋</h1>
-        <p class="text-green-200 mt-1">FIFA Wereldkampioenschap 2026</p>
-        <div class="mt-4 flex flex-wrap gap-3">
-            <a href="/voorspellingen" class="bg-white text-green-700 font-semibold px-5 py-2.5 rounded-xl hover:bg-green-50 transition-colors text-sm">
-                ⚽ Maak voorspelling
-            </a>
-            <a href="/toernooi" class="bg-green-600 border border-white/30 text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-green-500 transition-colors text-sm">
-                🏆 Toernooi voorspelling
-            </a>
-            @if($whatsappGroupUrl)
-                <a href="{{ $whatsappGroupUrl }}" target="_blank" rel="noopener"
-                    class="bg-[#25D366] text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-[#1ebe5d] transition-colors text-sm">
-                    💬 WhatsApp-groep
-                </a>
-            @endif
-        </div>
-    </div>
-
-    {{-- Voortgang: maak duidelijk dat je BEIDE moet doen --}}
+    {{-- Voortgangsberekening (gebruikt in het blok hiernaast) --}}
     @php
         $matchesDone = $openCount > 0 && $predictedCount >= $openCount;
         $tournamentComplete = $tournamentDone === 4;
         $allDone = ($openCount === 0 || $matchesDone) && $tournamentComplete;
     @endphp
 
-    <div class="rounded-2xl border p-5 {{ $allDone ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200' }}">
+    {{-- Hero + "maak je voorspellingen compleet" naast elkaar (2 kolommen) --}}
+    <div class="grid md:grid-cols-2 gap-6 items-start">
+
+        {{-- Hero --}}
+        <div class="bg-gradient-to-r from-green-700 to-green-600 rounded-2xl p-6 text-white">
+            <h1 class="text-2xl font-bold">Welkom, {{ auth()->user()->name }}! 👋</h1>
+            <p class="text-green-200 mt-1">FIFA Wereldkampioenschap 2026</p>
+            <div class="mt-4 flex flex-wrap gap-3">
+                <a href="/voorspellingen" class="bg-white text-green-700 font-semibold px-5 py-2.5 rounded-xl hover:bg-green-50 transition-colors text-sm">
+                    ⚽ Maak voorspelling
+                </a>
+                <a href="/toernooi" class="bg-green-600 border border-white/30 text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-green-500 transition-colors text-sm">
+                    🏆 Toernooi voorspelling
+                </a>
+                @if($whatsappGroupUrl)
+                    <a href="{{ $whatsappGroupUrl }}" target="_blank" rel="noopener"
+                        class="bg-[#25D366] text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-[#1ebe5d] transition-colors text-sm">
+                        💬 WhatsApp-groep
+                    </a>
+                @endif
+            </div>
+        </div>
+
+        {{-- Voortgang: maak duidelijk dat je BEIDE moet doen --}}
+        <div class="rounded-2xl border p-5 {{ $allDone ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200' }}">
         <div class="flex items-center gap-2 mb-4">
             <span class="text-xl">{{ $allDone ? '✅' : '📋' }}</span>
             <h2 class="font-bold text-gray-800">
@@ -111,6 +115,7 @@
                 </button>
             </form>
         @endif
+        </div>
     </div>
 
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
