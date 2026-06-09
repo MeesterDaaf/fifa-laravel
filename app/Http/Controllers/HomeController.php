@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Fixture;
 use App\Models\Prediction;
 use App\Models\TournamentPrediction;
+use App\Models\TriviaVote;
+use App\Services\DailyTriviaService;
 use App\Services\ScoringService;
 
 class HomeController extends Controller
 {
     public function __construct(private ScoringService $scoring) {}
 
-    public function index()
+    public function index(DailyTriviaService $dailyTrivia)
     {
         $user = auth()->user();
         $now = now();
@@ -57,10 +59,18 @@ class HomeController extends Controller
         // Voor admins: aantal gespeelde wedstrijden dat nog op invoer wacht.
         $awaitingResults = $user->is_admin ? Fixture::awaitingResult()->count() : 0;
 
+        // Vraag van de dag (grappige trivia, telt niet mee).
+        $trivia = $dailyTrivia->todaysQuestion();
+        $triviaVote = $trivia
+            ? TriviaVote::where('trivia_question_id', $trivia->id)->where('user_id', $user->id)->first()
+            : null;
+        $triviaResults = ($trivia && $triviaVote) ? $dailyTrivia->results($trivia) : null;
+
         return view('home.index', compact(
             'upcoming', 'recent', 'myPredIds', 'leaderboard',
             'openCount', 'predictedCount', 'tournamentStatus', 'tournamentDone',
-            'whatsappGroupUrl', 'awaitingResults'
+            'whatsappGroupUrl', 'awaitingResults',
+            'trivia', 'triviaVote', 'triviaResults'
         ));
     }
 }

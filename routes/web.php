@@ -8,6 +8,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RanglijstController;
 use App\Http\Controllers\ToernooiController;
+use App\Http\Controllers\TriviaController;
 use App\Http\Controllers\VoorspellingenController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/toernooi', [ToernooiController::class, 'store']);
     Route::get('/deelnemers', [DeelnemersController::class, 'index']);
     Route::get('/deelnemers/{user}', [DeelnemersController::class, 'show']);
+    Route::post('/trivia/{question}/vote', [TriviaController::class, 'vote']);
     Route::get('/profiel', [ProfileController::class, 'edit']);
     Route::put('/profiel', [ProfileController::class, 'update']);
     Route::delete('/profiel', [ProfileController::class, 'destroy']);

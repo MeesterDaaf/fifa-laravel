@@ -113,7 +113,10 @@
         @endif
     </div>
 
-    <div class="grid md:grid-cols-2 gap-6">
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+        {{-- Vraag van de dag (grappige trivia) --}}
+        @include('partials.trivia')
 
         {{-- Aankomende wedstrijden --}}
         <section>
@@ -130,11 +133,11 @@
                                 <div class="flex items-center gap-2 flex-1 min-w-0">
                                     <span class="flex items-center gap-1 min-w-0 text-sm font-semibold text-gray-800">
                                         <span class="shrink-0">{{ get_flag($match->home_team_code) }}</span>
-                                        <span class="truncate">{{ country_name($match->home_team_code, $match->home_team) }}</span>
+                                        <span>{{ $match->home_team_code }}</span>
                                     </span>
                                     <span class="text-gray-400 text-xs font-bold shrink-0">vs</span>
                                     <span class="flex items-center justify-end gap-1 min-w-0 text-sm font-semibold text-gray-800">
-                                        <span class="truncate text-right">{{ country_name($match->away_team_code, $match->away_team) }}</span>
+                                        <span>{{ $match->away_team_code }}</span>
                                         <span class="shrink-0">{{ get_flag($match->away_team_code) }}</span>
                                     </span>
                                 </div>
