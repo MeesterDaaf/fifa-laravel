@@ -11,7 +11,7 @@
         <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
             <p class="text-sm font-semibold text-red-800">🔒 De toernooivoorspelling is gesloten</p>
             <p class="text-xs text-red-700 mt-1">
-                Het toernooi is begonnen@if($deadline) op {{ format_day($deadline) }} om {{ to_nl_time($deadline)->format('H:i') }}@endif.
+                Het toernooi is begonnen{{ $deadline ? ' op '.format_day($deadline).' om '.to_nl_time($deadline)->format('H:i') : '' }}.
                 Je voorspelling kan niet meer gewijzigd worden.
             </p>
         </div>
