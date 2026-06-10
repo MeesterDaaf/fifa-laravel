@@ -3,29 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#060b08">
     <title>Inloggen – FIFA 2026 Pool</title>
+    @include('partials.theme-script')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-gradient-to-br from-green-900 via-green-800 to-green-900 flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <div class="w-full max-w-md">
+    <div class="w-full max-w-md stagger">
         <div class="text-center mb-8">
-            <div class="text-6xl mb-3">⚽</div>
-            <h1 class="text-3xl font-bold text-white">FIFA 2026 Pool</h1>
-            <p class="text-green-300 mt-1">Inloggen bij jouw pool</p>
+            <div class="text-6xl mb-4 drop-shadow-[0_0_24px_rgba(189,240,59,0.4)]">⚽</div>
+            <p class="kicker mb-1">Voorspelpool · USA / Canada / Mexico</p>
+            <h1 class="h-display text-5xl">FIFA <span class="text-volt-400">2026</span></h1>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-2xl p-8">
-            <h2 class="text-xl font-semibold text-gray-800 mb-6">Inloggen</h2>
+        <div class="card p-8">
+            <h2 class="font-display font-bold uppercase tracking-wide text-xl text-white mb-6">Inloggen</h2>
 
             @if($errors->any())
-                <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-4 text-sm">
+                <div class="alert alert-error mb-4">
                     {{ $errors->first() }}
                 </div>
             @endif
 
             @if(session('status'))
-                <div class="bg-green-50 border border-green-200 text-green-800 rounded-lg px-4 py-3 mb-4 text-sm">
+                <div class="alert alert-ok mb-4">
                     {{ session('status') }}
                 </div>
             @endif
@@ -34,43 +36,40 @@
                 @csrf
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">E-mailadres</label>
+                    <label class="label">E-mailadres</label>
                     <input
                         type="email"
                         name="email"
                         value="{{ old('email') }}"
                         required
                         autofocus
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        class="input"
                         placeholder="jij@voorbeeld.nl"
                     >
                 </div>
 
                 <div>
-                    <div class="flex items-center justify-between mb-1">
-                        <label class="block text-sm font-medium text-gray-700">Wachtwoord</label>
-                        <a href="/forgot-password" class="text-xs text-green-600 hover:underline">Wachtwoord vergeten?</a>
+                    <div class="flex items-center justify-between">
+                        <label class="label">Wachtwoord</label>
+                        <a href="/forgot-password" class="text-xs text-volt-400 hover:text-volt-300">Wachtwoord vergeten?</a>
                     </div>
                     <input
                         type="password"
                         name="password"
                         required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        class="input"
                         placeholder="••••••••"
                     >
                 </div>
 
-                <button
-                    type="submit"
-                    class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors"
-                >
+                <button type="submit" class="btn btn-volt w-full py-3">
                     Inloggen
                 </button>
             </form>
 
-            <p class="text-center text-sm text-gray-600 mt-6">
+            <p class="text-center text-sm text-white/50 mt-6">
                 Nog geen account?
-                <a href="/register" class="text-green-600 font-medium hover:underline">Registreer hier</a>
+                <a href="/register" class="text-volt-400 font-medium hover:text-volt-300">Registreer hier</a>
             </p>
         </div>
     </div>

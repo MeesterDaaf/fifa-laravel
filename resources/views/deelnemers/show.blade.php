@@ -1,48 +1,44 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-2xl mx-auto px-4 py-6">
+<div class="max-w-2xl mx-auto px-4 py-6 stagger">
 
-    <a href="/deelnemers" class="text-sm text-green-600 hover:underline">← Alle deelnemers</a>
+    <a href="/deelnemers" class="text-sm text-volt-400 hover:text-volt-300">← Alle deelnemers</a>
 
-    <h1 class="text-2xl font-bold text-gray-800 mt-2 mb-1">
+    <p class="kicker mt-3 mb-1">Spelersprofiel</p>
+    <h1 class="h-display text-4xl mb-1">
         {{ $user->name }}
         @if($user->id === auth()->id())
-            <span class="text-green-600 text-base font-medium">(jij)</span>
+            <span class="text-volt-400 text-xl not-italic">(jij)</span>
         @endif
     </h1>
-    <p class="text-gray-500 text-sm mb-6">Voorspellingen van {{ $user->name }}</p>
+    <p class="text-white/55 text-sm mb-6">Voorspellingen van {{ $user->name }}</p>
 
     {{-- Toernooi-voorspellingen --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-        <h2 class="font-semibold text-gray-700 mb-3">🏆 Toernooi</h2>
+    <div class="card p-6 mb-6">
+        <h2 class="font-display font-bold uppercase tracking-wide text-white mb-3">🏆 Toernooi</h2>
         <div class="grid grid-cols-2 gap-3 text-sm">
-            <div class="bg-gray-50 rounded-xl p-3">
-                <div class="text-xs text-gray-400">🏆 Winnaar</div>
-                <div class="font-bold text-gray-800">{{ $tournament?->champion ?? '—' }}</div>
-            </div>
-            <div class="bg-gray-50 rounded-xl p-3">
-                <div class="text-xs text-gray-400">🥇 Topscorer</div>
-                <div class="font-bold text-gray-800">{{ $tournament?->top_scorer ?? '—' }}</div>
-            </div>
-            <div class="bg-gray-50 rounded-xl p-3">
-                <div class="text-xs text-gray-400">🟨 Gele kaarten</div>
-                <div class="font-bold text-gray-800">{{ $tournament?->total_yellow_cards ?? '—' }}</div>
-            </div>
-            <div class="bg-gray-50 rounded-xl p-3">
-                <div class="text-xs text-gray-400">🟥 Rode kaarten</div>
-                <div class="font-bold text-gray-800">{{ $tournament?->total_red_cards ?? '—' }}</div>
-            </div>
+            @foreach([
+                ['🏆 Winnaar', $tournament?->champion],
+                ['🥇 Topscorer', $tournament?->top_scorer],
+                ['🟨 Gele kaarten', $tournament?->total_yellow_cards],
+                ['🟥 Rode kaarten', $tournament?->total_red_cards],
+            ] as [$label, $value])
+                <div class="bg-white/4 border border-white/8 rounded-xl p-3">
+                    <div class="text-xs text-white/45 mb-0.5">{{ $label }}</div>
+                    <div class="font-display font-bold text-base {{ $value !== null ? 'text-volt-300' : 'text-white/30' }}">{{ $value ?? '—' }}</div>
+                </div>
+            @endforeach
         </div>
         @if($tournament?->ai_reasoning)
-            <p class="mt-3 text-sm text-purple-700 bg-purple-50 border border-purple-100 rounded-lg px-3 py-2 italic">
+            <p class="mt-3 text-sm text-signal-blue bg-signal-blue/8 border border-signal-blue/20 rounded-lg px-3 py-2 italic">
                 🤖 {{ $tournament->ai_reasoning }}
             </p>
         @endif
     </div>
 
     {{-- Wedstrijd-voorspellingen per fase --}}
-    <h2 class="font-semibold text-gray-700 mb-3">⚽ Wedstrijden</h2>
+    <h2 class="font-display font-bold uppercase tracking-wide text-white mb-3">⚽ Wedstrijden</h2>
 
     @php
         $stageOrder = ['GROUP_STAGE', 'LAST_32', 'LAST_16', 'QUARTER_FINALS', 'SEMI_FINALS', 'THIRD_PLACE', 'FINAL'];
@@ -50,32 +46,33 @@
     @endphp
 
     @if($byStage->isEmpty())
-        <p class="text-gray-500 text-sm bg-white rounded-xl p-4 shadow-sm">Nog geen wedstrijden geladen.</p>
+        <p class="text-white/50 text-sm card p-4">Nog geen wedstrijden geladen.</p>
     @endif
 
     @foreach($sorted as $stage => $matches)
         <section class="mb-6">
-            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                {{ $matches->first()->stageLabel() }}
+            <h3 class="flex items-center gap-3 mb-2">
+                <span class="font-display font-bold uppercase tracking-[0.15em] text-xs text-volt-500">{{ $matches->first()->stageLabel() }}</span>
+                <span class="flex-1 h-px bg-gradient-to-r from-volt-500/30 to-transparent"></span>
             </h3>
             <div class="space-y-2">
                 @foreach($matches as $match)
                     @php $pred = $predictions->get($match->id); @endphp
-                    <div class="bg-white rounded-xl px-4 py-3 shadow-sm border border-gray-100">
+                    <div class="card px-4 py-3">
                         <div class="flex items-center gap-3">
                             <div class="flex-1 flex items-center gap-2 min-w-0">
-                                <span class="flex-1 flex items-center gap-1 min-w-0 text-sm font-semibold text-gray-800">
+                                <span class="flex-1 flex items-center gap-1 min-w-0 text-sm font-semibold text-white">
                                     <span class="shrink-0">{{ get_flag($match->home_team_code) }}</span>
                                     <span class="truncate">{{ country_name($match->home_team_code, $match->home_team) }}</span>
                                 </span>
                                 @if($match->isFinished())
-                                    <span class="shrink-0 bg-gray-800 text-white text-xs font-bold px-2 py-0.5 rounded">
+                                    <span class="shrink-0 scorebox text-xs">
                                         {{ $match->home_score }}-{{ $match->away_score }}
                                     </span>
                                 @else
-                                    <span class="shrink-0 text-gray-300 text-xs">vs</span>
+                                    <span class="shrink-0 text-white/25 text-xs">vs</span>
                                 @endif
-                                <span class="flex-1 flex items-center justify-end gap-1 min-w-0 text-sm font-semibold text-gray-800">
+                                <span class="flex-1 flex items-center justify-end gap-1 min-w-0 text-sm font-semibold text-white">
                                     <span class="truncate text-right">{{ country_name($match->away_team_code, $match->away_team) }}</span>
                                     <span class="shrink-0">{{ get_flag($match->away_team_code) }}</span>
                                 </span>
@@ -83,21 +80,21 @@
 
                             <div class="text-right flex-shrink-0 w-20">
                                 @if($pred)
-                                    <span class="text-sm font-bold text-green-700">{{ $pred->home_score }}-{{ $pred->away_score }}</span>
+                                    <span class="text-sm scoreline text-volt-400">{{ $pred->home_score }}-{{ $pred->away_score }}</span>
                                     @if($match->isFinished())
-                                        <div class="text-xs text-gray-400">{{ $pred->total_points }}pt</div>
+                                        <div class="text-xs text-white/40">{{ $pred->total_points }}pt</div>
                                     @endif
                                 @else
-                                    <span class="text-xs text-gray-300">—</span>
+                                    <span class="text-xs text-white/25">—</span>
                                 @endif
                             </div>
                         </div>
 
                         @if($pred && $pred->first_goal_minute !== null)
-                            <div class="mt-1 text-xs text-gray-400">⚽ 1e doelpunt: minuut {{ $pred->first_goal_minute }}</div>
+                            <div class="mt-1 text-xs text-white/40">⚽ 1e doelpunt: minuut {{ $pred->first_goal_minute }}</div>
                         @endif
                         @if($pred && $pred->ai_reasoning)
-                            <p class="mt-1 text-xs text-purple-700 italic">🤖 {{ $pred->ai_reasoning }}</p>
+                            <p class="mt-1 text-xs text-signal-blue italic">🤖 {{ $pred->ai_reasoning }}</p>
                         @endif
                     </div>
                 @endforeach

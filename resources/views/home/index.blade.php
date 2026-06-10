@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-5xl mx-auto px-4 py-6 space-y-8">
+<div class="max-w-5xl mx-auto px-4 py-6 space-y-8 stagger">
 
     @if(($awaitingResults ?? 0) > 0)
-        <a href="/admin" class="block bg-amber-50 border border-amber-300 rounded-2xl p-4 hover:bg-amber-100 transition-colors">
-            <span class="font-semibold text-amber-800">⚠️ {{ $awaitingResults }} gespeelde wedstrijd{{ $awaitingResults !== 1 ? 'en' : '' }} wacht{{ $awaitingResults === 1 ? '' : 'en' }} op invoer</span>
-            <span class="block text-sm text-amber-700">Ga naar het admin-paneel om de uitslagen in te voeren →</span>
+        <a href="/admin" class="block card card-hover p-4 border-signal-amber/40!">
+            <span class="font-semibold text-signal-amber">⚠️ {{ $awaitingResults }} gespeelde wedstrijd{{ $awaitingResults !== 1 ? 'en' : '' }} wacht{{ $awaitingResults === 1 ? '' : 'en' }} op invoer</span>
+            <span class="block text-sm text-white/60">Ga naar het admin-paneel om de uitslagen in te voeren →</span>
         </a>
     @endif
 
@@ -21,100 +21,93 @@
     <div class="grid md:grid-cols-2 gap-6 items-start">
 
         {{-- Hero --}}
-        <div class="bg-gradient-to-r from-green-700 to-green-600 rounded-2xl p-6 text-white">
-            <h1 class="text-2xl font-bold">Welkom, {{ auth()->user()->name }}! 👋</h1>
-            <p class="text-green-200 mt-1">FIFA Wereldkampioenschap 2026</p>
-            <div class="mt-4 flex flex-wrap gap-3">
-                <a href="/voorspellingen" class="bg-white text-green-700 font-semibold px-5 py-2.5 rounded-xl hover:bg-green-50 transition-colors text-sm">
-                    ⚽ Maak voorspelling
-                </a>
-                <a href="/toernooi" class="bg-green-600 border border-white/30 text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-green-500 transition-colors text-sm">
-                    🏆 Toernooi voorspelling
-                </a>
+        <div class="card-volt p-6 relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-10 text-[9rem] leading-none opacity-[0.07] select-none" aria-hidden="true">⚽</div>
+            <p class="kicker mb-1">Matchday · Wereldkampioenschap 2026</p>
+            <h1 class="h-display text-4xl">Welkom, <span class="text-volt-400">{{ auth()->user()->name }}</span></h1>
+            <div class="mt-5 flex flex-wrap gap-3 relative">
+                <a href="/voorspellingen" class="btn btn-volt">⚽ Maak voorspelling</a>
+                <a href="/toernooi" class="btn btn-outline">🏆 Toernooi</a>
                 @if($whatsappGroupUrl)
-                    <a href="{{ $whatsappGroupUrl }}" target="_blank" rel="noopener"
-                        class="bg-[#25D366] text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-[#1ebe5d] transition-colors text-sm">
-                        💬 WhatsApp-groep
-                    </a>
+                    <a href="{{ $whatsappGroupUrl }}" target="_blank" rel="noopener" class="btn btn-wa">💬 WhatsApp</a>
                 @endif
             </div>
         </div>
 
         {{-- Voortgang: maak duidelijk dat je BEIDE moet doen --}}
-        <div class="rounded-2xl border p-5 {{ $allDone ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200' }}">
-        <div class="flex items-center gap-2 mb-4">
-            <span class="text-xl">{{ $allDone ? '✅' : '📋' }}</span>
-            <h2 class="font-bold text-gray-800">
-                {{ $allDone ? 'Je bent helemaal bij — alles voorspeld!' : 'Maak je voorspellingen compleet' }}
-            </h2>
-        </div>
+        <div class="card p-5 {{ $allDone ? 'border-volt-500/30!' : 'border-signal-amber/30!' }}">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="text-xl">{{ $allDone ? '✅' : '📋' }}</span>
+                <h2 class="font-display font-bold uppercase tracking-wide text-white">
+                    {{ $allDone ? 'Je bent helemaal bij — alles voorspeld!' : 'Maak je voorspellingen compleet' }}
+                </h2>
+            </div>
 
-        @unless($allDone)
-            <p class="text-sm text-gray-600 mb-4">
-                Je doet mee op twee manieren: voorspel de <strong>wedstrijden</strong> én maak je <strong>toernooi-voorspellingen</strong>. Vergeet geen van beide!
-            </p>
-        @endunless
+            @unless($allDone)
+                <p class="text-sm text-white/55 mb-4">
+                    Je doet mee op twee manieren: voorspel de <strong class="text-white/85">wedstrijden</strong> én maak je <strong class="text-white/85">toernooi-voorspellingen</strong>. Vergeet geen van beide!
+                </p>
+            @endunless
 
-        <div class="grid sm:grid-cols-2 gap-3">
+            <div class="grid sm:grid-cols-2 gap-3">
 
-            {{-- Wedstrijden --}}
-            <a href="/voorspellingen" class="block bg-white rounded-xl p-4 border border-gray-100 hover:border-green-300 hover:shadow-sm transition-all">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="font-semibold text-gray-800 text-sm">⚽ Wedstrijden</span>
-                    @if($openCount === 0)
-                        <span class="text-xs text-gray-400">geen open</span>
-                    @elseif($matchesDone)
-                        <span class="text-xs font-medium text-green-600">✅ compleet</span>
-                    @else
-                        <span class="text-xs font-medium text-amber-600">{{ $openCount - $predictedCount }} te doen</span>
-                    @endif
-                </div>
-                @if($openCount > 0)
-                    <div class="flex h-2 rounded-full overflow-hidden bg-gray-100 mb-1">
-                        <div class="bg-green-500" style="width: {{ round($predictedCount / $openCount * 100) }}%"></div>
+                {{-- Wedstrijden --}}
+                <a href="/voorspellingen" class="block card card-hover p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-display font-bold uppercase tracking-wide text-sm text-white">⚽ Wedstrijden</span>
+                        @if($openCount === 0)
+                            <span class="pill pill-muted">geen open</span>
+                        @elseif($matchesDone)
+                            <span class="pill pill-ok">✓ compleet</span>
+                        @else
+                            <span class="pill pill-wait">{{ $openCount - $predictedCount }} te doen</span>
+                        @endif
                     </div>
-                    <p class="text-xs text-gray-500">{{ $predictedCount }} van {{ $openCount }} open wedstrijden voorspeld</p>
-                @else
-                    <p class="text-xs text-gray-500">Er staan nu geen wedstrijden open om te voorspellen.</p>
-                @endif
-            </a>
-
-            {{-- Toernooi --}}
-            <a href="/toernooi" class="block bg-white rounded-xl p-4 border border-gray-100 hover:border-green-300 hover:shadow-sm transition-all">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="font-semibold text-gray-800 text-sm">🏆 Toernooi</span>
-                    @if($tournamentComplete)
-                        <span class="text-xs font-medium text-green-600">✅ compleet</span>
+                    @if($openCount > 0)
+                        <div class="meter mb-1.5">
+                            <div class="meter-fill" style="width: {{ round($predictedCount / $openCount * 100) }}%"></div>
+                        </div>
+                        <p class="text-xs text-white/45">{{ $predictedCount }} van {{ $openCount }} open wedstrijden voorspeld</p>
                     @else
-                        <span class="text-xs font-medium text-amber-600">{{ $tournamentDone }}/4 gedaan</span>
+                        <p class="text-xs text-white/45">Er staan nu geen wedstrijden open om te voorspellen.</p>
                     @endif
-                </div>
-                <div class="flex flex-wrap gap-1.5">
-                    @foreach([
-                        'champion' => 'Winnaar',
-                        'top_scorer' => 'Topscorer',
-                        'yellow' => 'Gele kaarten',
-                        'red' => 'Rode kaarten',
-                    ] as $key => $label)
-                        <span class="text-xs px-2 py-0.5 rounded-full {{ $tournamentStatus[$key] ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                            {{ $tournamentStatus[$key] ? '✅' : '⭕' }} {{ $label }}
-                        </span>
-                    @endforeach
-                </div>
-            </a>
+                </a>
 
-        </div>
+                {{-- Toernooi --}}
+                <a href="/toernooi" class="block card card-hover p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-display font-bold uppercase tracking-wide text-sm text-white">🏆 Toernooi</span>
+                        @if($tournamentComplete)
+                            <span class="pill pill-ok">✓ compleet</span>
+                        @else
+                            <span class="pill pill-wait">{{ $tournamentDone }}/4 gedaan</span>
+                        @endif
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                        @foreach([
+                            'champion' => 'Winnaar',
+                            'top_scorer' => 'Topscorer',
+                            'yellow' => 'Gele kaarten',
+                            'red' => 'Rode kaarten',
+                        ] as $key => $label)
+                            <span class="pill {{ $tournamentStatus[$key] ? 'pill-ok' : 'pill-muted' }}">
+                                {{ $tournamentStatus[$key] ? '✓' : '○' }} {{ $label }}
+                            </span>
+                        @endforeach
+                    </div>
+                </a>
 
-        @if($openCount - $predictedCount > 0)
-            <form method="POST" action="/voorspellingen/auto-fill" class="mt-3"
-                onsubmit="return confirm('De nog-open wedstrijden die je nog niet hebt voorspeld worden automatisch ingevuld op basis van de kansberekening. Je kunt ze daarna nog aanpassen. Doorgaan?');">
-                @csrf
-                <button type="submit"
-                    class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm">
-                    ⚡ Vul mijn open wedstrijden automatisch in
-                </button>
-            </form>
-        @endif
+            </div>
+
+            @if($openCount - $predictedCount > 0)
+                <form method="POST" action="/voorspellingen/auto-fill" class="mt-3"
+                    onsubmit="return confirm('De nog-open wedstrijden die je nog niet hebt voorspeld worden automatisch ingevuld op basis van de kansberekening. Je kunt ze daarna nog aanpassen. Doorgaan?');">
+                    @csrf
+                    <button type="submit" class="btn btn-volt w-full">
+                        ⚡ Vul mijn open wedstrijden automatisch in
+                    </button>
+                </form>
+            @endif
         </div>
     </div>
 
@@ -125,39 +118,39 @@
 
         {{-- Aankomende wedstrijden --}}
         <section>
-            <h2 class="text-lg font-bold text-gray-800 mb-3">📅 Aankomende wedstrijden</h2>
+            <h2 class="font-display font-bold uppercase tracking-wide text-lg text-white mb-3">📅 Aankomende wedstrijden</h2>
             @if($upcoming->isEmpty())
-                <p class="text-gray-500 text-sm bg-white rounded-xl p-4 shadow-sm">
+                <p class="text-white/50 text-sm card p-4">
                     Geen geplande wedstrijden. Sync eerst wedstrijden via admin.
                 </p>
             @else
                 <div class="space-y-2">
                     @foreach($upcoming as $match)
-                        <a href="/voorspellingen/{{ $match->id }}" class="block bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:border-green-300 hover:shadow-md transition-all">
+                        <a href="/voorspellingen/{{ $match->id }}" class="block card card-hover p-4">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-2 flex-1 min-w-0">
-                                    <span class="flex items-center gap-1 min-w-0 text-sm font-semibold text-gray-800">
+                                    <span class="flex items-center gap-1 min-w-0 text-sm font-semibold text-white">
                                         <span class="shrink-0">{{ get_flag($match->home_team_code) }}</span>
-                                        <span>{{ $match->home_team_code }}</span>
+                                        <span class="scoreline">{{ $match->home_team_code }}</span>
                                     </span>
-                                    <span class="text-gray-400 text-xs font-bold shrink-0">vs</span>
-                                    <span class="flex items-center justify-end gap-1 min-w-0 text-sm font-semibold text-gray-800">
-                                        <span>{{ $match->away_team_code }}</span>
+                                    <span class="text-white/30 text-xs font-bold shrink-0">vs</span>
+                                    <span class="flex items-center justify-end gap-1 min-w-0 text-sm font-semibold text-white">
+                                        <span class="scoreline">{{ $match->away_team_code }}</span>
                                         <span class="shrink-0">{{ get_flag($match->away_team_code) }}</span>
                                     </span>
                                 </div>
                                 <div class="text-right flex-shrink-0">
-                                    <div class="text-xs text-gray-500">{{ format_date_short($match->scheduled_at) }}</div>
+                                    <div class="text-xs text-white/45">{{ format_date_short($match->scheduled_at) }}</div>
                                     @if(isset($myPredIds[$match->id]))
-                                        <span class="text-xs text-green-600 font-medium">✅ Voorspeld</span>
+                                        <span class="text-xs text-volt-400 font-medium">✓ Voorspeld</span>
                                     @else
-                                        <span class="text-xs text-orange-500 font-medium">⏳ Voorspel nog</span>
+                                        <span class="text-xs text-signal-amber font-medium">⏳ Voorspel nog</span>
                                     @endif
                                 </div>
                             </div>
                         </a>
                     @endforeach
-                    <a href="/voorspellingen" class="block text-center text-sm text-green-600 hover:underline py-1">
+                    <a href="/voorspellingen" class="block text-center text-sm text-volt-400 hover:text-volt-300 py-1">
                         Alle wedstrijden →
                     </a>
                 </div>
@@ -166,27 +159,26 @@
 
         {{-- Top 5 Ranglijst --}}
         <section>
-            <h2 class="text-lg font-bold text-gray-800 mb-3">🏆 Top 5 Ranglijst</h2>
+            <h2 class="font-display font-bold uppercase tracking-wide text-lg text-white mb-3">🏆 Top 5 Ranglijst</h2>
             @if(empty($leaderboard))
-                <p class="text-gray-500 text-sm bg-white rounded-xl p-4 shadow-sm">Nog geen punten gescoord</p>
+                <p class="text-white/50 text-sm card p-4">Nog geen punten gescoord</p>
             @else
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="card overflow-hidden">
                     @foreach($leaderboard as $i => $entry)
-                        <div class="flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0 {{ $entry['id'] === auth()->id() ? 'bg-green-50' : '' }}">
-                            <span class="w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0
-                                {{ $i === 0 ? 'bg-yellow-400 text-yellow-900' : ($i === 1 ? 'bg-gray-300 text-gray-700' : ($i === 2 ? 'bg-orange-300 text-orange-900' : 'bg-gray-100 text-gray-600')) }}">
+                        <div class="row {{ $entry['id'] === auth()->id() ? 'row-me' : '' }}">
+                            <span class="rank {{ $i === 0 ? 'rank-1' : ($i === 1 ? 'rank-2' : ($i === 2 ? 'rank-3' : '')) }}">
                                 {{ $i + 1 }}
                             </span>
-                            <span class="flex-1 font-medium text-sm text-gray-800 truncate">
+                            <span class="flex-1 font-medium text-sm text-white truncate">
                                 {{ $entry['name'] }}
                                 @if($entry['id'] === auth()->id())
-                                    <span class="text-green-600 text-xs ml-1">(jij)</span>
+                                    <span class="text-volt-400 text-xs ml-1">(jij)</span>
                                 @endif
                             </span>
-                            <span class="font-bold text-green-700 flex-shrink-0">{{ $entry['totalPoints'] }}pt</span>
+                            <span class="scoreline text-lg {{ $i === 0 ? 'text-gold-400' : 'text-volt-400' }} flex-shrink-0">{{ $entry['totalPoints'] }}<span class="text-xs text-white/40 ml-0.5">pt</span></span>
                         </div>
                     @endforeach
-                    <a href="/ranglijst" class="block text-center text-sm text-green-600 hover:underline py-3">
+                    <a href="/ranglijst" class="block text-center text-sm text-volt-400 hover:text-volt-300 hover:bg-white/5 py-3 transition-colors">
                         Volledige ranglijst →
                     </a>
                 </div>
@@ -198,20 +190,20 @@
     {{-- Recente uitslagen --}}
     @if($recent->isNotEmpty())
         <section>
-            <h2 class="text-lg font-bold text-gray-800 mb-3">🎯 Recente uitslagen</h2>
+            <h2 class="font-display font-bold uppercase tracking-wide text-lg text-white mb-3">🎯 Recente uitslagen</h2>
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 @foreach($recent as $match)
-                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                        <div class="text-xs text-gray-400 mb-2">{{ format_date_short($match->scheduled_at) }}</div>
+                    <div class="card p-4">
+                        <div class="text-xs text-white/40 mb-2">{{ format_date_short($match->scheduled_at) }}</div>
                         <div class="flex items-center justify-between gap-2">
-                            <span class="text-sm font-medium text-gray-700">
-                                {{ get_flag($match->home_team_code) }} {{ $match->home_team_code }}
+                            <span class="text-sm font-medium text-white/85">
+                                {{ get_flag($match->home_team_code) }} <span class="scoreline">{{ $match->home_team_code }}</span>
                             </span>
-                            <span class="text-lg font-bold text-gray-800 bg-gray-100 px-3 py-1 rounded-lg">
+                            <span class="scorebox text-lg">
                                 {{ $match->home_score ?? '?' }} - {{ $match->away_score ?? '?' }}
                             </span>
-                            <span class="text-sm font-medium text-gray-700">
-                                {{ $match->away_team_code }} {{ get_flag($match->away_team_code) }}
+                            <span class="text-sm font-medium text-white/85">
+                                <span class="scoreline">{{ $match->away_team_code }}</span> {{ get_flag($match->away_team_code) }}
                             </span>
                         </div>
                     </div>

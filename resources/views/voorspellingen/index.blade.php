@@ -1,21 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-3xl mx-auto px-4 py-6">
+<div class="max-w-3xl mx-auto px-4 py-6 stagger">
 
-    <h1 class="text-2xl font-bold text-gray-800 mb-4">⚽ Wedstrijden &amp; Voorspellingen</h1>
+    <p class="kicker mb-1">Speelschema</p>
+    <h1 class="h-display text-4xl mb-6">Wedstrijden &amp; <span class="text-volt-400">voorspellingen</span></h1>
 
     @if(($openUnpredicted ?? 0) > 0)
-        <div class="bg-green-50 border border-green-200 rounded-2xl p-4 mb-6">
-            <p class="text-sm text-green-800 mb-3">
-                Geen tijd om alles los in te vullen? Laat de app je <strong>{{ $openUnpredicted }}</strong> nog-open
+        <div class="card-volt p-4 mb-6">
+            <p class="text-sm text-white/75 mb-3">
+                Geen tijd om alles los in te vullen? Laat de app je <strong class="text-volt-300">{{ $openUnpredicted }}</strong> nog-open
                 wedstrijd{{ $openUnpredicted !== 1 ? 'en' : '' }} realistisch invullen op basis van de kansberekening — daarna kun je alles nog aanpassen.
             </p>
             <form method="POST" action="/voorspellingen/auto-fill"
                 onsubmit="return confirm('De {{ $openUnpredicted }} nog-open wedstrijden die je nog niet hebt voorspeld worden automatisch ingevuld. Je kunt ze daarna nog aanpassen. Doorgaan?');">
                 @csrf
-                <button type="submit"
-                    class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
+                <button type="submit" class="btn btn-volt w-full sm:w-auto">
                     ⚡ Vul mijn open wedstrijden automatisch in
                 </button>
             </form>
@@ -23,10 +23,10 @@
     @endif
 
     @if($byStage->isEmpty())
-        <div class="bg-white rounded-2xl p-8 text-center shadow-sm">
+        <div class="card p-8 text-center">
             <div class="text-4xl mb-3">📭</div>
-            <p class="text-gray-500">Nog geen wedstrijden geladen.</p>
-            <p class="text-gray-400 text-sm mt-1">Vraag de admin om wedstrijden te synchroniseren.</p>
+            <p class="text-white/60">Nog geen wedstrijden geladen.</p>
+            <p class="text-white/40 text-sm mt-1">Vraag de admin om wedstrijden te synchroniseren.</p>
         </div>
     @endif
 
@@ -37,8 +37,9 @@
 
     @foreach($sorted as $stage => $matches)
         <section class="mb-8">
-            <h2 class="text-base font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                {{ $matches->first()->stageLabel() }}
+            <h2 class="flex items-center gap-3 mb-3">
+                <span class="font-display font-bold uppercase tracking-[0.15em] text-sm text-volt-500">{{ $matches->first()->stageLabel() }}</span>
+                <span class="flex-1 h-px bg-gradient-to-r from-volt-500/30 to-transparent"></span>
             </h2>
             <div class="space-y-2">
                 @foreach($matches as $match)
@@ -48,24 +49,23 @@
                         $isPast = $match->isFinished();
                     @endphp
                     <a href="/voorspellingen/{{ $match->id }}"
-                        class="block bg-white rounded-xl px-4 py-3 shadow-sm border transition-all
-                            {{ $isOpen ? 'border-gray-100 hover:border-green-300 hover:shadow-md' : 'border-gray-100 opacity-80' }}">
+                        class="block card px-4 py-3 {{ $isOpen ? 'card-hover' : 'opacity-70' }}">
                         {{-- Regel 1: teams op de volledige breedte --}}
                         <div class="flex items-center gap-3">
-                            <span class="flex-1 flex items-center gap-2 min-w-0 text-sm font-semibold text-gray-800">
+                            <span class="flex-1 flex items-center gap-2 min-w-0 text-sm font-semibold text-white">
                                 <span class="shrink-0 text-base">{{ get_flag($match->home_team_code) }}</span>
                                 <span class="truncate">{{ country_name($match->home_team_code, $match->home_team) }}</span>
                             </span>
 
                             @if($isPast)
-                                <span class="shrink-0 bg-gray-800 text-white text-sm font-bold px-3 py-1 rounded-lg">
+                                <span class="shrink-0 scorebox text-sm">
                                     {{ $match->home_score }} - {{ $match->away_score }}
                                 </span>
                             @else
-                                <span class="shrink-0 bg-gray-100 text-gray-500 text-xs font-medium px-2.5 py-1 rounded-lg">vs</span>
+                                <span class="shrink-0 scorebox-muted">vs</span>
                             @endif
 
-                            <span class="flex-1 flex items-center justify-end gap-2 min-w-0 text-sm font-semibold text-gray-800">
+                            <span class="flex-1 flex items-center justify-end gap-2 min-w-0 text-sm font-semibold text-white">
                                 <span class="truncate text-right">{{ country_name($match->away_team_code, $match->away_team) }}</span>
                                 <span class="shrink-0 text-base">{{ get_flag($match->away_team_code) }}</span>
                             </span>
@@ -73,15 +73,15 @@
 
                         {{-- Regel 2: datum/groep links, voorspelstatus rechts --}}
                         <div class="flex items-center justify-between gap-2 mt-2 text-xs">
-                            <span class="text-gray-400 truncate">
+                            <span class="text-white/40 truncate">
                                 {{ format_date($match->scheduled_at) }}@if($match->match_group) · {{ group_label($match->match_group) }}@endif
                             </span>
                             @if($pred)
-                                <span class="shrink-0 text-green-600 font-medium">✅ {{ $pred->home_score }}-{{ $pred->away_score }}</span>
+                                <span class="shrink-0 text-volt-400 font-semibold scoreline">✓ {{ $pred->home_score }}-{{ $pred->away_score }}</span>
                             @elseif($isOpen)
-                                <span class="shrink-0 text-orange-500 font-medium">⏳ Voorspel</span>
+                                <span class="shrink-0 text-signal-amber font-medium">⏳ Voorspel</span>
                             @else
-                                <span class="shrink-0 text-gray-400">Gesloten</span>
+                                <span class="shrink-0 text-white/35">Gesloten</span>
                             @endif
                         </div>
                     </a>
