@@ -40,14 +40,23 @@ class ToernooiController extends Controller
             }
         }
 
+        $isOpen = TournamentPrediction::isOpen();
+        $deadline = TournamentPrediction::deadline();
+
         return view('toernooi.index', compact(
             'myPrediction', 'tournamentResult', 'allPredictions',
-            'teams', 'selectedTeam', 'squad'
+            'teams', 'selectedTeam', 'squad', 'isOpen', 'deadline'
         ));
     }
 
     public function store(Request $request)
     {
+        // De toernooivoorspelling sluit zodra de eerste wedstrijd begint.
+        if (! TournamentPrediction::isOpen()) {
+            return redirect('/toernooi')
+                ->with('error', 'De toernooivoorspelling is gesloten — het toernooi is begonnen.');
+        }
+
         $request->validate([
             'top_scorer'         => 'nullable|string|max:100',
             'champion'           => 'nullable|string|max:100',
