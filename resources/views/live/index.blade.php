@@ -19,9 +19,14 @@
             @endif
         </div>
     @else
-        <p class="text-white/55 text-sm mb-6">
+        <p class="text-white/55 text-sm mb-4">
             De virtuele stand: alsof de huidige tussenstand{{ $liveBlocks->count() > 1 ? 'en' : '' }} de eindstand zou zijn.
         </p>
+
+        <a href="https://nos.nl/live" target="_blank" rel="noopener"
+            class="btn btn-volt w-full py-3 mb-6 flex items-center justify-center gap-2">
+            📺 Kijk live bij de NOS
+        </a>
 
         {{-- Live wedstrijden met voorspellingen --}}
         @foreach($liveBlocks as $block)
