@@ -56,7 +56,7 @@
                         </span>
                         <span class="text-xs text-white/40">
                             {{-- Op mobiel passen de losse puntenkolommen niet; toon de uitsplitsing hier --}}
-                            <span class="sm:hidden">{{ $entry['matchPoints'] }} wedstr. · {{ $entry['tournamentPoints'] }} toern.</span>
+                            <span class="sm:hidden">{{ $entry['matchPoints'] }}pt wedstr. · {{ $entry['tournamentPoints'] }}pt toern.</span>
                             <span class="hidden sm:inline">{{ $entry['predictionsCount'] }} voorspelling{{ $entry['predictionsCount'] !== 1 ? 'en' : '' }}</span>
                             @if(!is_null($entry['movement']) && $entry['movement'] !== 0)
                                 <span class="ml-1 font-semibold {{ $entry['movement'] > 0 ? 'text-volt-400' : 'text-signal-red' }}">
