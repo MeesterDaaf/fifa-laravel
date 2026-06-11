@@ -15,9 +15,10 @@ class ToernooiController extends Controller
 
         $myPrediction = TournamentPrediction::where('user_id', $user->id)->first();
         $tournamentResult = TournamentResult::find('singleton');
-        $allPredictions = TournamentPrediction::with('user:id,name')
-            ->orderBy('top_scorer')
-            ->get();
+        // Pas zichtbaar na de deadline, zodat niemand kan afkijken.
+        $allPredictions = TournamentPrediction::isOpen()
+            ? collect()
+            : TournamentPrediction::with('user:id,name')->orderBy('top_scorer')->get();
 
         // Landen voor de picker (alleen die met spelers).
         $teams = Team::has('players')->orderBy('name')->get();

@@ -30,8 +30,8 @@
             <div class="flex items-center gap-3 px-4 py-2 bg-white/3 border-b border-white/8 text-xs font-display font-bold text-white/40 uppercase tracking-wider">
                 <span class="w-7">#</span>
                 <span class="flex-1">Naam</span>
-                <span class="w-16 text-right">Wedstr.</span>
-                <span class="w-16 text-right">Toern.</span>
+                <span class="hidden sm:block w-16 text-right">Wedstr.</span>
+                <span class="hidden sm:block w-16 text-right">Toern.</span>
                 <span class="w-16 text-right text-white/70">Totaal</span>
                 <span class="w-2"></span>
             </div>
@@ -55,7 +55,9 @@
                             @endif
                         </span>
                         <span class="text-xs text-white/40">
-                            {{ $entry['predictionsCount'] }} voorspelling{{ $entry['predictionsCount'] !== 1 ? 'en' : '' }}
+                            {{-- Op mobiel passen de losse puntenkolommen niet; toon de uitsplitsing hier --}}
+                            <span class="sm:hidden">{{ $entry['matchPoints'] }} wedstr. · {{ $entry['tournamentPoints'] }} toern.</span>
+                            <span class="hidden sm:inline">{{ $entry['predictionsCount'] }} voorspelling{{ $entry['predictionsCount'] !== 1 ? 'en' : '' }}</span>
                             @if(!is_null($entry['movement']) && $entry['movement'] !== 0)
                                 <span class="ml-1 font-semibold {{ $entry['movement'] > 0 ? 'text-volt-400' : 'text-signal-red' }}">
                                     {{ $entry['movement'] > 0 ? '▲' : '▼' }}{{ abs($entry['movement']) }}
@@ -64,8 +66,8 @@
                         </span>
                     </div>
 
-                    <span class="w-16 text-right text-sm text-white/55 scoreline">{{ $entry['matchPoints'] }}pt</span>
-                    <span class="w-16 text-right text-sm text-white/55 scoreline">{{ $entry['tournamentPoints'] }}pt</span>
+                    <span class="hidden sm:block w-16 text-right text-sm text-white/55 scoreline">{{ $entry['matchPoints'] }}pt</span>
+                    <span class="hidden sm:block w-16 text-right text-sm text-white/55 scoreline">{{ $entry['tournamentPoints'] }}pt</span>
                     <span class="w-16 text-right scoreline text-lg {{ $i === 0 ? 'text-gold-400' : 'text-volt-400' }}">
                         {{ $entry['totalPoints'] }}pt
                     </span>

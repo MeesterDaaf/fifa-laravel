@@ -34,9 +34,9 @@
                     ['🟨 Gele kaarten', $tournament?->total_yellow_cards],
                     ['🟥 Rode kaarten', $tournament?->total_red_cards],
                 ] as [$label, $value])
-                    <div class="bg-white/4 border border-white/8 rounded-xl p-3">
+                    <div class="bg-white/4 border border-white/8 rounded-xl p-3 min-w-0">
                         <div class="text-xs text-white/45 mb-0.5">{{ $label }}</div>
-                        <div class="font-display font-bold text-base {{ $value !== null ? 'text-volt-300' : 'text-white/30' }}">{{ $value ?? '—' }}</div>
+                        <div class="font-display font-bold text-base break-words {{ $value !== null ? 'text-volt-300' : 'text-white/30' }}">{{ $value ?? '—' }}</div>
                     </div>
                 @endforeach
             </div>

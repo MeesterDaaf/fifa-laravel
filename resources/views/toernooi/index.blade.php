@@ -4,7 +4,7 @@
 <div class="max-w-2xl mx-auto px-4 py-6 stagger">
 
     <p class="kicker mb-1">Bonuspunten</p>
-    <h1 class="h-display text-4xl mb-2">Toernooi<span class="text-volt-400">voorspelling</span></h1>
+    <h1 class="h-display text-4xl mb-2">Toernooi<br><span class="text-volt-400">voorspelling</span></h1>
     <p class="text-white/55 text-sm mb-6">Voorspel de grote toernooi-uitslagen. Hoe meer goed, hoe meer bonuspunten!</p>
 
     {{-- Deadline-status --}}
@@ -87,9 +87,9 @@
                 ['🟨 Gele kaarten', $myPrediction?->total_yellow_cards],
                 ['🟥 Rode kaarten', $myPrediction?->total_red_cards],
             ] as [$label, $value])
-                <div class="bg-white/4 border border-white/8 rounded-xl p-3">
+                <div class="bg-white/4 border border-white/8 rounded-xl p-3 min-w-0">
                     <div class="text-xs text-white/45 mb-0.5">{{ $label }}</div>
-                    <div class="font-display font-bold text-base {{ $value !== null ? 'text-volt-300' : 'text-white/30' }}">{{ $value ?? '—' }}</div>
+                    <div class="font-display font-bold text-base break-words {{ $value !== null ? 'text-volt-300' : 'text-white/30' }}">{{ $value ?? '—' }}</div>
                 </div>
             @endforeach
         </div>
@@ -160,12 +160,12 @@
             </div>
         @else
             {{-- Stap 2: kies een speler --}}
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="font-display font-bold uppercase tracking-wide text-white flex items-center gap-2">
-                    <span class="text-2xl">{{ get_flag($selectedTeam->tla) }}</span>
-                    {{ country_name($selectedTeam->tla, $selectedTeam->name) }}
+            <div class="flex items-center justify-between gap-2 mb-4">
+                <h3 class="font-display font-bold uppercase tracking-wide text-white flex items-center gap-2 min-w-0">
+                    <span class="text-2xl shrink-0">{{ get_flag($selectedTeam->tla) }}</span>
+                    <span class="truncate">{{ country_name($selectedTeam->tla, $selectedTeam->name) }}</span>
                 </h3>
-                <a href="/toernooi#picker" class="text-sm text-volt-400 hover:text-volt-300">← Ander land</a>
+                <a href="/toernooi#picker" class="text-sm text-volt-400 hover:text-volt-300 shrink-0">← Ander land</a>
             </div>
 
             @foreach($squad as $group => $players)
@@ -204,15 +204,15 @@
                 @foreach($allPredictions as $pred)
                     <div class="px-4 py-3 border-b border-white/5 last:border-0
                         {{ $pred->user_id === auth()->id() ? 'row-me' : '' }}">
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm font-medium text-white/90">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-sm font-medium text-white/90 truncate min-w-0">
                                 {{ $pred->user->name }}
                                 @if($pred->user_id === auth()->id())
                                     <span class="text-volt-400 text-xs ml-1">(jij)</span>
                                 @endif
                             </span>
                             @if($hasResult)
-                                <span class="text-xs scoreline {{ $pred->points > 0 ? 'text-volt-400' : 'text-white/35' }}">
+                                <span class="text-xs scoreline shrink-0 {{ $pred->points > 0 ? 'text-volt-400' : 'text-white/35' }}">
                                     {{ $pred->points > 0 ? "+{$pred->points}pt 🎉" : '0pt' }}
                                 </span>
                             @endif
