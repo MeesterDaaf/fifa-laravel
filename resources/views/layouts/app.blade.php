@@ -20,9 +20,11 @@
 
                 {{-- Desktop-menu (verborgen op mobiel) --}}
                 @php
+                    $isLiveNow = \App\Models\Fixture::live()->exists();
                     $topNav = [
                         ['/', 'Dashboard', request()->path() === '/'],
                         ['/voorspellingen', 'Wedstrijden', request()->is('voorspellingen*')],
+                        ['/live', 'Live', request()->is('live*')],
                         ['/toernooi', 'Toernooi', request()->is('toernooi*')],
                         ['/groepen', 'Groepen', request()->is('groepen*')],
                         ['/ranglijst', 'Ranglijst', request()->is('ranglijst*')],
@@ -31,7 +33,12 @@
                 @endphp
                 <div class="hidden sm:flex items-center gap-1 ml-auto">
                     @foreach($topNav as [$url, $label, $active])
-                        <a href="{{ $url }}" class="navlink {{ $active ? 'navlink-active' : '' }}">{{ $label }}</a>
+                        <a href="{{ $url }}" class="navlink relative {{ $active ? 'navlink-active' : '' }}">
+                            {{ $label }}
+                            @if($url === '/live' && $isLiveNow)
+                                <span class="absolute top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-signal-red animate-pulse"></span>
+                            @endif
+                        </a>
                     @endforeach
                     @if($whatsappGroupUrl ?? null)
                         <a href="{{ $whatsappGroupUrl }}" target="_blank" rel="noopener"
@@ -131,9 +138,11 @@
             'users'     => '<path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21 12.282 12.282 0 0 1 2.25 19.234v-.106c0-1.113.285-2.16.786-3.07M15 19.128a9.337 9.337 0 0 1-7.5 0m7.5 0c.621 0 1.125.504 1.125 1.125v.003M7.5 19.128a9.338 9.338 0 0 0-4.121-.952 4.125 4.125 0 0 1 7.533-2.493M7.5 19.128c0-1.113.285-2.16.786-3.07m0 0a4.125 4.125 0 0 1 7.428 0M12 9a3.75 3.75 0 1 0 0-7.5A3.75 3.75 0 0 0 12 9Z" />',
             'groups'    => '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />',
         ];
+        $icons['bolt'] = '<path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />';
         $nav = [
             ['/', 'home', 'Dashboard', request()->path() === '/'],
             ['/voorspellingen', 'calendar', 'Wedstr.', request()->is('voorspellingen*')],
+            ['/live', 'bolt', 'Live', request()->is('live*')],
             ['/toernooi', 'trophy', 'Toernooi', request()->is('toernooi*')],
             ['/groepen', 'groups', 'Groepen', request()->is('groepen*')],
             ['/ranglijst', 'chart', 'Stand', request()->is('ranglijst*')],
@@ -141,16 +150,21 @@
         ];
     @endphp
     <nav class="sm:hidden fixed bottom-0 inset-x-0 bg-pitch-950/90 backdrop-blur-md border-t border-white/10 z-50">
-        <div class="grid grid-cols-6">
+        <div class="grid grid-cols-7">
             @foreach($nav as [$url, $icon, $label, $active])
                 <a href="{{ $url }}" class="relative flex flex-col items-center justify-center gap-1 py-2 transition-colors
                     {{ $active ? 'text-volt-400' : 'text-white/40' }}">
                     @if($active)
                         <span class="absolute top-0 inset-x-3 h-0.5 rounded-full bg-volt-500 shadow-[0_0_8px_rgba(189,240,59,0.8)]"></span>
                     @endif
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="{{ $active ? '2' : '1.5' }}" stroke="currentColor">
-                        {!! $icons[$icon] !!}
-                    </svg>
+                    <span class="relative">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="{{ $active ? '2' : '1.5' }}" stroke="currentColor">
+                            {!! $icons[$icon] !!}
+                        </svg>
+                        @if($url === '/live' && $isLiveNow)
+                            <span class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-signal-red animate-pulse"></span>
+                        @endif
+                    </span>
                     <span class="text-[10px] truncate max-w-full font-display uppercase tracking-wider {{ $active ? 'font-bold' : 'font-medium' }}">{{ $label }}</span>
                 </a>
             @endforeach

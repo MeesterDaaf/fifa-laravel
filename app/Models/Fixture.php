@@ -37,6 +37,17 @@ class Fixture extends Model
         return $this->status === 'FINISHED';
     }
 
+    /** Wedstrijden die nu bezig zijn: IN_PLAY, of begonnen maar nog niet afgerond (max 2u na aftrap). */
+    public function scopeLive($query)
+    {
+        return $query->where(function ($q) {
+            $q->where('status', 'IN_PLAY')
+                ->orWhere(fn ($q2) => $q2->where('status', 'SCHEDULED')
+                    ->where('scheduled_at', '<=', now())
+                    ->where('scheduled_at', '>', now()->subHours(2)));
+        });
+    }
+
     /** Tijdstip waarop voorspellen sluit (15 min vóór aftrap). */
     public function locksAt(): \Carbon\Carbon
     {
