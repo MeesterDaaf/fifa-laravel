@@ -12,28 +12,39 @@
             <span class="text-volt-400 text-xl not-italic">(jij)</span>
         @endif
     </h1>
-    <p class="text-white/55 text-sm mb-6">Voorspellingen van {{ $user->name }}</p>
+    <p class="text-white/55 text-sm mb-6">
+        Voorspellingen van {{ $user->name }}
+        @if(!$isOwner)
+            <span class="block text-xs text-white/40 mt-1">🔒 Voorspellingen zijn pas zichtbaar zodra een wedstrijd op slot gaat</span>
+        @endif
+    </p>
 
     {{-- Toernooi-voorspellingen --}}
     <div class="card p-6 mb-6">
         <h2 class="font-display font-bold uppercase tracking-wide text-white mb-3">🏆 Toernooi</h2>
-        <div class="grid grid-cols-2 gap-3 text-sm">
-            @foreach([
-                ['🏆 Winnaar', $tournament?->champion],
-                ['🥇 Topscorer', $tournament?->top_scorer],
-                ['🟨 Gele kaarten', $tournament?->total_yellow_cards],
-                ['🟥 Rode kaarten', $tournament?->total_red_cards],
-            ] as [$label, $value])
-                <div class="bg-white/4 border border-white/8 rounded-xl p-3">
-                    <div class="text-xs text-white/45 mb-0.5">{{ $label }}</div>
-                    <div class="font-display font-bold text-base {{ $value !== null ? 'text-volt-300' : 'text-white/30' }}">{{ $value ?? '—' }}</div>
-                </div>
-            @endforeach
-        </div>
-        @if($tournament?->ai_reasoning)
-            <p class="mt-3 text-sm text-signal-blue bg-signal-blue/8 border border-signal-blue/20 rounded-lg px-3 py-2 italic">
-                🤖 {{ $tournament->ai_reasoning }}
+        @if($tournamentHidden)
+            <p class="text-sm text-white/50 bg-white/4 border border-white/8 rounded-xl p-3">
+                🔒 Verborgen tot de deadline — voorspellingen van anderen zijn pas zichtbaar als het toernooi begint.
             </p>
+        @else
+            <div class="grid grid-cols-2 gap-3 text-sm">
+                @foreach([
+                    ['🏆 Winnaar', $tournament?->champion],
+                    ['🥇 Topscorer', $tournament?->top_scorer],
+                    ['🟨 Gele kaarten', $tournament?->total_yellow_cards],
+                    ['🟥 Rode kaarten', $tournament?->total_red_cards],
+                ] as [$label, $value])
+                    <div class="bg-white/4 border border-white/8 rounded-xl p-3">
+                        <div class="text-xs text-white/45 mb-0.5">{{ $label }}</div>
+                        <div class="font-display font-bold text-base {{ $value !== null ? 'text-volt-300' : 'text-white/30' }}">{{ $value ?? '—' }}</div>
+                    </div>
+                @endforeach
+            </div>
+            @if($tournament?->ai_reasoning)
+                <p class="mt-3 text-sm text-signal-blue bg-signal-blue/8 border border-signal-blue/20 rounded-lg px-3 py-2 italic">
+                    🤖 {{ $tournament->ai_reasoning }}
+                </p>
+            @endif
         @endif
     </div>
 
@@ -57,7 +68,10 @@
             </h3>
             <div class="space-y-2">
                 @foreach($matches as $match)
-                    @php $pred = $predictions->get($match->id); @endphp
+                    @php
+                        $pred = $predictions->get($match->id);
+                        $hidden = ! $isOwner && $match->isOpen();
+                    @endphp
                     <div class="card px-4 py-3">
                         <div class="flex items-center gap-3">
                             <div class="flex-1 flex items-center gap-2 min-w-0">
@@ -79,7 +93,9 @@
                             </div>
 
                             <div class="text-right flex-shrink-0 w-20">
-                                @if($pred)
+                                @if($hidden)
+                                    <span class="text-xs text-white/25" title="Verborgen tot de wedstrijd op slot gaat">🔒</span>
+                                @elseif($pred)
                                     <span class="text-sm scoreline text-volt-400">{{ $pred->home_score }}-{{ $pred->away_score }}</span>
                                     @if($match->isFinished())
                                         <div class="text-xs text-white/40">{{ $pred->total_points }}pt</div>
@@ -90,10 +106,10 @@
                             </div>
                         </div>
 
-                        @if($pred && $pred->first_goal_minute !== null)
+                        @if(!$hidden && $pred && $pred->first_goal_minute !== null)
                             <div class="mt-1 text-xs text-white/40">⚽ 1e doelpunt: minuut {{ $pred->first_goal_minute }}</div>
                         @endif
-                        @if($pred && $pred->ai_reasoning)
+                        @if(!$hidden && $pred && $pred->ai_reasoning)
                             <p class="mt-1 text-xs text-signal-blue italic">🤖 {{ $pred->ai_reasoning }}</p>
                         @endif
                     </div>

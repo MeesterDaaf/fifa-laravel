@@ -34,8 +34,14 @@ class DeelnemersController extends Controller
         $tournament = TournamentPrediction::where('user_id', $user->id)->first();
         $tournamentResult = TournamentResult::find('singleton');
 
+        // Voorspellingen van anderen blijven verborgen zolang er nog voorspeld
+        // kan worden (eigen voorspellingen zijn altijd zichtbaar).
+        $isOwner = $user->id === auth()->id();
+        $tournamentHidden = ! $isOwner && TournamentPrediction::isOpen();
+
         return view('deelnemers.show', compact(
-            'user', 'byStage', 'predictions', 'tournament', 'tournamentResult'
+            'user', 'byStage', 'predictions', 'tournament', 'tournamentResult',
+            'isOwner', 'tournamentHidden'
         ));
     }
 }
