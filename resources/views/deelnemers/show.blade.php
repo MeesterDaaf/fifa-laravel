@@ -3,7 +3,7 @@
 @section('content')
 <div class="max-w-2xl mx-auto px-4 py-6 stagger">
 
-    <a href="/deelnemers" class="text-sm text-volt-400 hover:text-volt-300">← Alle deelnemers</a>
+    <a href="/ranglijst" class="text-sm text-volt-400 hover:text-volt-300">← Ranglijst</a>
 
     <p class="kicker mt-3 mb-1">Spelersprofiel</p>
     <h1 class="h-display text-4xl mb-1">

@@ -27,8 +27,7 @@
                         ['/live', 'Live', request()->is('live*')],
                         ['/toernooi', 'Toernooi', request()->is('toernooi*')],
                         ['/groepen', 'Groepen', request()->is('groepen*')],
-                        ['/ranglijst', 'Ranglijst', request()->is('ranglijst*')],
-                        ['/deelnemers', 'Deelnemers', request()->is('deelnemers*')],
+                        ['/ranglijst', 'Ranglijst', request()->is('ranglijst*') || request()->is('deelnemers*')],
                     ];
                 @endphp
                 <div class="hidden sm:flex items-center gap-1 ml-auto">
@@ -145,12 +144,11 @@
             ['/live', 'bolt', 'Live', request()->is('live*')],
             ['/toernooi', 'trophy', 'Toernooi', request()->is('toernooi*')],
             ['/groepen', 'groups', 'Groepen', request()->is('groepen*')],
-            ['/ranglijst', 'chart', 'Stand', request()->is('ranglijst*')],
-            ['/deelnemers', 'users', 'Spelers', request()->is('deelnemers*')],
+            ['/ranglijst', 'chart', 'Stand', request()->is('ranglijst*') || request()->is('deelnemers*')],
         ];
     @endphp
     <nav class="sm:hidden fixed bottom-0 inset-x-0 bg-pitch-950/90 backdrop-blur-md border-t border-white/10 z-50">
-        <div class="grid grid-cols-7">
+        <div class="grid grid-cols-6">
             @foreach($nav as [$url, $icon, $label, $active])
                 <a href="{{ $url }}" class="relative flex flex-col items-center justify-center gap-1 py-2 transition-colors
                     {{ $active ? 'text-volt-400' : 'text-white/40' }}">

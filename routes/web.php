@@ -37,7 +37,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/voorspellingen/{id}', [VoorspellingenController::class, 'store'])->whereNumber('id');
     Route::get('/toernooi', [ToernooiController::class, 'index']);
     Route::post('/toernooi', [ToernooiController::class, 'store']);
-    Route::get('/deelnemers', [DeelnemersController::class, 'index']);
+    // Deelnemersoverzicht is opgegaan in de ranglijst; profielpagina's blijven.
+    Route::redirect('/deelnemers', '/ranglijst');
     Route::get('/deelnemers/{user}', [DeelnemersController::class, 'show']);
     Route::post('/trivia/{question}/vote', [TriviaController::class, 'vote']);
     Route::get('/profiel', [ProfileController::class, 'edit']);
