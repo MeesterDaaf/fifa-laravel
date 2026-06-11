@@ -133,8 +133,13 @@ class FootballApiService
         $finished = [];
 
         foreach ($candidates as $fixture) {
-            $response = Http::withHeaders(['X-Auth-Token' => $apiKey])
-                ->get("{$this->baseUrl}/matches/{$fixture->external_id}");
+            try {
+                $response = Http::withHeaders(['X-Auth-Token' => $apiKey])
+                    ->timeout(10)
+                    ->get("{$this->baseUrl}/matches/{$fixture->external_id}");
+            } catch (\Illuminate\Http\Client\ConnectionException) {
+                continue; // API onbereikbaar voor deze wedstrijd; volgende run opnieuw
+            }
 
             if (! $response->ok()) {
                 continue; // volgende run opnieuw proberen
