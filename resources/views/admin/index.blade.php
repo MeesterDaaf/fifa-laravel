@@ -5,7 +5,29 @@
 
     <p class="kicker mb-1">Beheer</p>
     <h1 class="h-display text-4xl mb-2">Admin <span class="text-volt-400">Panel</span></h1>
-    <p class="text-white/55 text-sm mb-6">{{ $totalUsers }} deelnemers geregistreerd</p>
+    <p class="text-white/55 text-sm mb-4">{{ $totalUsers }} deelnemers geregistreerd</p>
+
+    {{-- Snelmenu: springt naar het betreffende onderdeel (blijft plakken onder de navbalk) --}}
+    <nav class="sticky top-14 z-40 -mx-4 px-4 py-2 mb-6 bg-pitch-950/85 backdrop-blur-md border-b border-white/8">
+        <div class="flex gap-2 overflow-x-auto no-scrollbar text-xs">
+            @foreach([
+                ['#ranglijst', '📊 Ranglijst'],
+                ['#uitnodigen', '👥 Uitnodigen'],
+                ['#whatsapp', '💬 WhatsApp'],
+                ['#sync', '🔄 Sync'],
+                ['#herinneringen', '✉️ Reminders'],
+                ['#ai', '🤖 AI'],
+                ['#deelnemers', '👤 Deelnemers'],
+                ['#toernooi-resultaat', '🏆 Toernooi'],
+                ['#wedstrijden', '⚽ Wedstrijden'],
+            ] as [$anchor, $label])
+                <a href="{{ $anchor }}"
+                    class="shrink-0 whitespace-nowrap px-3 py-1.5 rounded-full border border-white/10 bg-white/4 text-white/70 hover:text-volt-400 hover:border-volt-500/50 transition-colors font-display font-bold uppercase tracking-wide">
+                    {{ $label }}
+                </a>
+            @endforeach
+        </div>
+    </nav>
 
     {{-- Waarschuwing: speelronde voorbij, uitslagen wachten op invoer --}}
     @if($awaitingResults->isNotEmpty())
@@ -25,7 +47,7 @@
     @endif
 
     {{-- Ranglijst-ijkpunt --}}
-    <section class="card p-6 mb-6">
+    <section id="ranglijst" class="card p-6 mb-6 scroll-mt-28">
         <h2 class="font-display font-bold uppercase tracking-wide text-lg text-white mb-2">📊 Ranglijst vastleggen</h2>
         <p class="text-white/55 text-sm mb-4">
             Leg de huidige stand vast als ijkpunt; daarna tonen de stijgers/dalers (▲/▼) op de ranglijst de beweging sinds dit punt.
@@ -43,7 +65,7 @@
     </section>
 
     {{-- Vrienden uitnodigen --}}
-    <section class="card p-6 mb-6">
+    <section id="uitnodigen" class="card p-6 mb-6 scroll-mt-28">
         <h2 class="font-display font-bold uppercase tracking-wide text-lg text-white mb-4">👥 Vrienden uitnodigen</h2>
 
         @php $inviteLink = $baseUrl . '/register?code=' . $inviteCode; @endphp
@@ -67,7 +89,7 @@
     </section>
 
     {{-- WhatsApp-groep --}}
-    <section class="card p-6 mb-6">
+    <section id="whatsapp" class="card p-6 mb-6 scroll-mt-28">
         <h2 class="font-display font-bold uppercase tracking-wide text-lg text-white mb-2">💬 WhatsApp-groep</h2>
         <p class="text-white/55 text-sm mb-4">
             Plak hier de uitnodigingslink van je WhatsApp-groep (WhatsApp → groep → "Uitnodigen via link").
@@ -98,7 +120,7 @@
     </section>
 
     {{-- Wedstrijden synchroniseren --}}
-    <section class="card p-6 mb-6">
+    <section id="sync" class="card p-6 mb-6 scroll-mt-28">
         <h2 class="font-display font-bold uppercase tracking-wide text-lg text-white mb-2">🔄 Wedstrijden synchroniseren</h2>
         <p class="text-white/55 text-sm mb-4">
             Haal de laatste wedstrijden op van football-data.org. Vereist een geldige API key in .env.
@@ -120,7 +142,7 @@
     </section>
 
     {{-- Herinneringen --}}
-    <section class="card p-6 mb-6">
+    <section id="herinneringen" class="card p-6 mb-6 scroll-mt-28">
         <h2 class="font-display font-bold uppercase tracking-wide text-lg text-white mb-2">✉️ Herinneringen</h2>
         <p class="text-white/55 text-sm mb-4">
             Stuur een e-mail naar iedereen die de wedstrijden van <strong class="text-white/85">morgen</strong> nog niet heeft voorspeld.
@@ -136,7 +158,7 @@
     </section>
 
     {{-- AI-bot --}}
-    <section class="card p-6 mb-6">
+    <section id="ai" class="card p-6 mb-6 scroll-mt-28">
         <h2 class="font-display font-bold uppercase tracking-wide text-lg text-white mb-2">🤖 AI-speler</h2>
         <p class="text-white/55 text-sm mb-4">
             Laat de AI-bot voorspellingen doen voor alle open wedstrijden (en eenmalig het toernooi).
@@ -151,7 +173,7 @@
     </section>
 
     {{-- Deelnemers beheren --}}
-    <section class="card p-6 mb-6">
+    <section id="deelnemers" class="card p-6 mb-6 scroll-mt-28">
         <h2 class="font-display font-bold uppercase tracking-wide text-lg text-white mb-4">👤 Deelnemers beheren ({{ $users->count() }})</h2>
         @php $adminCount = $users->where('is_admin', true)->count(); @endphp
         <div class="divide-y divide-white/5">
@@ -225,7 +247,7 @@
     </section>
 
     {{-- Toernooi resultaat --}}
-    <section class="card p-6 mb-6">
+    <section id="toernooi-resultaat" class="card p-6 mb-6 scroll-mt-28">
         <h2 class="font-display font-bold uppercase tracking-wide text-lg text-white mb-1">🏆 Toernooi resultaat</h2>
         <p class="text-white/55 text-sm mb-4">Vul de officiële uitslagen in. Bij opslaan worden alle toernooipunten herberekend.</p>
         <form method="POST" action="/admin/tournament" class="space-y-3">
@@ -274,7 +296,7 @@
     </section>
 
     {{-- Wedstrijden beheren --}}
-    <section>
+    <section id="wedstrijden" class="scroll-mt-28">
         <h2 class="font-display font-bold uppercase tracking-wide text-lg text-white mb-4">
             ⚽ Wedstrijden ({{ $fixtures->count() }})
         </h2>

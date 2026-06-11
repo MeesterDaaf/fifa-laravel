@@ -85,6 +85,19 @@ html[data-theme='light'] .only-dark { display: none; }
 html:not([data-theme='light']) .only-light { display: none; }
 
 @layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* horizontaal scrollbaar zonder zichtbare scrollbar (bv. admin-snelmenu) */
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
     body {
         background-color: var(--color-pitch-950);
         color: color-mix(in srgb, var(--ink) 88%, transparent);
