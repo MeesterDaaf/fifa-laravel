@@ -26,6 +26,13 @@ Schedule::command('matches:sync-live')
     ->everyMinute()
     ->withoutOverlapping();
 
+// Legt elke ochtend de ranglijst vast als ijkpunt voor de ▲/▼-pijltjes.
+// Om 09:00 NL zijn ook de laatste (Noord-Amerikaanse nacht)wedstrijden klaar;
+// de pijltjes tonen daarna de beweging door de wedstrijden van die dag.
+Schedule::command('ranking:capture')
+    ->dailyAt('09:00')
+    ->timezone('Europe/Amsterdam');
+
 // Laat de AI-bot elke dag om 12:00 nieuwe open wedstrijden voorspellen
 // (ná de sync, dus inclusief net-bekende knock-outteams).
 Schedule::command('ai:predict')

@@ -36,7 +36,8 @@
                 ⚠️ {{ $awaitingResults->count() }} wedstrijd{{ $awaitingResults->count() !== 1 ? 'en' : '' }} wacht{{ $awaitingResults->count() === 1 ? '' : 'en' }} op invoer
             </h2>
             <p class="text-sm text-white/60 mt-1 mb-3">
-                Deze zijn gespeeld maar nog niet ingevoerd. <strong class="text-white/85">Tip:</strong> leg eerst de ranglijst vast (knop hieronder), voer daarna de uitslagen in — dan kloppen de stijgers/dalers.
+                Deze zijn gespeeld maar nog niet verwerkt. Normaal doet de live-sync dit automatisch —
+                dat dit hier staat betekent waarschijnlijk dat de API geen uitslag gaf. Voer ze hieronder handmatig in.
             </p>
             <ul class="text-sm text-white/75 space-y-1">
                 @foreach($awaitingResults as $m)
@@ -50,8 +51,9 @@
     <section id="ranglijst" class="card p-6 mb-6 scroll-mt-28">
         <h2 class="font-display font-bold uppercase tracking-wide text-lg text-white mb-2">📊 Ranglijst vastleggen</h2>
         <p class="text-white/55 text-sm mb-4">
-            Leg de huidige stand vast als ijkpunt; daarna tonen de stijgers/dalers (▲/▼) op de ranglijst de beweging sinds dit punt.
-            Doe dit aan het begin van een speelronde, vóór je de uitslagen invoert.
+            De stijgers/dalers (▲/▼) op de ranglijst tonen de beweging sinds het laatste ijkpunt.
+            <strong class="text-white/75">Dit gaat vanzelf:</strong> elke ochtend om 09:00 wordt de stand automatisch vastgelegd.
+            Met de knop hieronder kun je het ijkpunt tussendoor handmatig resetten (de pijltjes beginnen dan weer op 0).
             @if($rankingCapturedAt)
                 <br><span class="text-xs text-white/40">Laatst vastgelegd: {{ format_date($rankingCapturedAt) }}</span>
             @endif
