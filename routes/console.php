@@ -22,9 +22,12 @@ Schedule::command('matches:sync')
 // Live-sync: elke minuut tussenstanden bijwerken en afgelopen wedstrijden
 // afronden (incl. puntenberekening). Doet alleen een API-call als er rond
 // dat moment een wedstrijd is, dus buiten wedstrijden kost dit niets.
+// Output gaat naar een logbestand zodat je op de server kunt zien dat (en wat)
+// de sync elke minuut doet: tail -f storage/logs/live-sync.log
 Schedule::command('matches:sync-live')
     ->everyMinute()
-    ->withoutOverlapping();
+    ->withoutOverlapping()
+    ->appendOutputTo(storage_path('logs/live-sync.log'));
 
 // Legt elke ochtend de ranglijst vast als ijkpunt voor de ▲/▼-pijltjes.
 // Om 09:00 NL zijn ook de laatste (Noord-Amerikaanse nacht)wedstrijden klaar;
