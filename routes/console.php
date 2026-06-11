@@ -14,10 +14,17 @@ Schedule::command('reminders:send')
     ->timezone('Europe/Amsterdam');
 
 // Synchroniseert elke ochtend om 06:00 de wedstrijden (teams/datum/fase) —
-// zo komen knock-outteams vanzelf binnen. Uitslagen blijven handmatig.
+// zo komen knock-outteams vanzelf binnen.
 Schedule::command('matches:sync')
     ->dailyAt('06:00')
     ->timezone('Europe/Amsterdam');
+
+// Live-sync: elke minuut tussenstanden bijwerken en afgelopen wedstrijden
+// afronden (incl. puntenberekening). Doet alleen een API-call als er rond
+// dat moment een wedstrijd is, dus buiten wedstrijden kost dit niets.
+Schedule::command('matches:sync-live')
+    ->everyMinute()
+    ->withoutOverlapping();
 
 // Laat de AI-bot elke dag om 12:00 nieuwe open wedstrijden voorspellen
 // (ná de sync, dus inclusief net-bekende knock-outteams).

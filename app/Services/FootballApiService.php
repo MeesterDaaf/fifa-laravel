@@ -103,4 +103,84 @@ class FootballApiService
 
         return $count;
     }
+
+    /**
+     * Live-sync: werkt status en (tussen)stand bij van de wedstrijden rond nu.
+     * IN_PLAY/PAUSED → tussenstand, FINISHED → eindstand. Eenmaal afgeronde
+     * wedstrijden worden niet meer aangeraakt (handmatige correcties blijven staan).
+     * Geeft ['updated' => int, 'finished' => fixture-ids] terug.
+     */
+    public function syncLiveScores(): array
+    {
+        $apiKey = config('services.football_api.key', '');
+        $competitionId = config('services.football_api.competition_id', 'WC');
+
+        $response = Http::withHeaders(['X-Auth-Token' => $apiKey])
+            ->get("{$this->baseUrl}/competitions/{$competitionId}/matches", [
+                'dateFrom' => now('UTC')->subDay()->toDateString(),
+                'dateTo'   => now('UTC')->addDay()->toDateString(),
+            ]);
+
+        if (! $response->ok()) {
+            throw new \Exception("Football API fout: {$response->status()} {$response->reason()}");
+        }
+
+        $updated = 0;
+        $finished = [];
+
+        foreach ($response->json('matches', []) as $match) {
+            $fixture = Fixture::where('external_id', $match['id'])->first();
+            if (! $fixture || $fixture->isFinished()) {
+                continue;
+            }
+
+            $home = $match['score']['fullTime']['home'] ?? null;
+            $away = $match['score']['fullTime']['away'] ?? null;
+
+            if (in_array($match['status'], ['IN_PLAY', 'PAUSED'])) {
+                $fixture->update([
+                    'status'     => 'IN_PLAY',
+                    'home_score' => $home ?? 0,
+                    'away_score' => $away ?? 0,
+                ]);
+                $updated++;
+            } elseif ($match['status'] === 'FINISHED' && $home !== null && $away !== null) {
+                $fixture->update([
+                    'status'            => 'FINISHED',
+                    'home_score'        => $home,
+                    'away_score'        => $away,
+                    'first_goal_minute' => $fixture->first_goal_minute ?? $this->fetchFirstGoalMinute($match['id']),
+                ]);
+                $finished[] = $fixture->id;
+                $updated++;
+            } elseif (in_array($match['status'], ['SCHEDULED', 'TIMED']) && $fixture->status === 'IN_PLAY') {
+                // Handmatig (of per ongeluk) op IN_PLAY gezet terwijl de wedstrijd
+                // nog niet bezig is: terugzetten, anders blijft hij eeuwig "live".
+                $fixture->update(['status' => 'SCHEDULED', 'home_score' => null, 'away_score' => null]);
+                $updated++;
+            }
+        }
+
+        return ['updated' => $updated, 'finished' => $finished];
+    }
+
+    /** Minuut van het eerste doelpunt, via het wedstrijddetail (goals staan niet in de lijst-response). */
+    private function fetchFirstGoalMinute(int $externalId): ?int
+    {
+        try {
+            $response = Http::withHeaders(['X-Auth-Token' => config('services.football_api.key', '')])
+                ->get("{$this->baseUrl}/matches/{$externalId}");
+
+            if (! $response->ok()) {
+                return null;
+            }
+
+            return collect($response->json('goals', []))
+                ->pluck('minute')
+                ->filter(fn ($m) => is_numeric($m))
+                ->min();
+        } catch (\Throwable) {
+            return null;
+        }
+    }
 }

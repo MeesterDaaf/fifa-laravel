@@ -11,6 +11,14 @@ totaal gele/rode kaarten) en strijden op een ranglijst.
   onderbouwing). Draaien: `php artisan ai:predict` of de admin-knop; dagelijks
   om 12:00 via de scheduler. LLM-onderbouwing vereist `ANTHROPIC_API_KEY`
   (zonder key blijven de cijfers werken). Details in [`AI_player.md`](./AI_player.md).
+- **Live-tabblad (gebouwd)** — `/live` toont tijdens een wedstrijd de
+  tussenstand, alle voorspellingen voor die wedstrijd en de virtuele ranglijst
+  (alsof de tussenstand de eindstand is). Tussenstanden komen automatisch
+  binnen via `php artisan matches:sync-live` (scheduler: elke minuut; doet
+  alleen een API-call als er rond dat moment een wedstrijd is). Afgelopen
+  wedstrijden worden automatisch afgerond inclusief puntenberekening; eenmaal
+  FINISHED raakt de sync een wedstrijd nooit meer aan, dus handmatige
+  correcties via het adminpaneel blijven staan.
 
 ## Goed om te weten
 
