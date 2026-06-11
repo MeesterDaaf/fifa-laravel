@@ -14,7 +14,7 @@
                 <p class="text-sm text-white/40">
                     Volgende wedstrijd: {{ get_flag($nextFixture->home_team_code) }} {{ country_name($nextFixture->home_team_code, $nextFixture->home_team) }}
                     – {{ country_name($nextFixture->away_team_code, $nextFixture->away_team) }} {{ get_flag($nextFixture->away_team_code) }}
-                    op {{ $nextFixture->scheduled_at->translatedFormat('l j F, H:i') }}
+                    op {{ format_date($nextFixture->scheduled_at) }}
                 </p>
             @endif
         </div>
