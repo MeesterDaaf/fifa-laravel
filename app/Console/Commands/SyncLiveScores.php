@@ -30,6 +30,14 @@ class SyncLiveScores extends Command
         try {
             $result = $api->syncLiveScores();
 
+            // IJkpunt vastleggen vóórdat de punten worden uitgedeeld: de
+            // ▲/▼-pijltjes op de ranglijst tonen dan precies de beweging die
+            // deze net-afgelopen wedstrijd(en) veroorzaken — en blijven staan
+            // tot de volgende wedstrijd afloopt.
+            if (count($result['finished']) > 0) {
+                $scoring->captureRanking();
+            }
+
             foreach ($result['finished'] as $fixtureId) {
                 $scoring->calculateMatchPoints($fixtureId);
             }

@@ -72,9 +72,17 @@ class AdminController extends Controller
             'first_goal_minute' => 'nullable|integer|min:1|max:120',
         ]);
 
+        // Bij het áfronden (niet bij een correctie achteraf) eerst de stand
+        // vastleggen, zodat de ▲/▼ op de ranglijst de beweging door deze
+        // wedstrijd tonen.
+        $wasFinished = $fixture->status === 'FINISHED';
+
         $fixture->update($data);
 
         if ($data['status'] === 'FINISHED' && $data['home_score'] !== null) {
+            if (! $wasFinished) {
+                $this->scoring->captureRanking();
+            }
             $this->scoring->calculateMatchPoints($fixture->id);
         }
 

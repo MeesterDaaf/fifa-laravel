@@ -7,6 +7,9 @@
     <h1 class="h-display text-4xl mb-2">Rang<span class="text-volt-400">lijst</span></h1>
     <p class="text-white/55 text-sm mb-6">
         {{ $totalMatches }} wedstrijd{{ $totalMatches !== 1 ? 'en' : '' }} afgespeeld
+        @if($totalMatches > 0)
+            <span class="text-white/35">· <span class="text-volt-400">▲</span>/<span class="text-signal-red">▼</span> = beweging door de laatst afgeronde wedstrijd</span>
+        @endif
     </p>
 
     {{-- Jouw positie --}}

@@ -52,7 +52,8 @@
         <h2 class="font-display font-bold uppercase tracking-wide text-lg text-white mb-2">📊 Ranglijst vastleggen</h2>
         <p class="text-white/55 text-sm mb-4">
             De stijgers/dalers (▲/▼) op de ranglijst tonen de beweging sinds het laatste ijkpunt.
-            <strong class="text-white/75">Dit gaat vanzelf:</strong> elke ochtend om 09:00 wordt de stand automatisch vastgelegd.
+            <strong class="text-white/75">Dit gaat vanzelf:</strong> zodra een wedstrijd afloopt wordt de stand vastgelegd
+            vlak vóór de puntenberekening, zodat de pijltjes de beweging door die wedstrijd tonen — tot de volgende wedstrijd afloopt.
             Met de knop hieronder kun je het ijkpunt tussendoor handmatig resetten (de pijltjes beginnen dan weer op 0).
             @if($rankingCapturedAt)
                 <br><span class="text-xs text-white/40">Laatst vastgelegd: {{ format_date($rankingCapturedAt) }}</span>

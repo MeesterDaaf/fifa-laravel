@@ -29,12 +29,13 @@ Schedule::command('matches:sync-live')
     ->withoutOverlapping()
     ->appendOutputTo(storage_path('logs/live-sync.log'));
 
-// Legt elke ochtend de ranglijst vast als ijkpunt voor de ▲/▼-pijltjes.
-// Om 09:00 NL zijn ook de laatste (Noord-Amerikaanse nacht)wedstrijden klaar;
-// de pijltjes tonen daarna de beweging door de wedstrijden van die dag.
-Schedule::command('ranking:capture')
-    ->dailyAt('09:00')
-    ->timezone('Europe/Amsterdam');
+// Het ranglijst-ijkpunt (voor de ▲/▼-pijltjes) wordt niet meer op een vast
+// tijdstip vastgelegd: dat wiste de pijltjes elke ochtend, terwijl de
+// (Noord-Amerikaanse nacht)wedstrijden net daarvoor waren afgelopen. Het
+// ijkpunt wordt nu vastgelegd op het moment dat een wedstrijd wordt afgerond
+// (in matches:sync-live en bij handmatige invoer), vlak vóór de punten-
+// berekening — de pijltjes blijven staan tot de volgende wedstrijd afloopt.
+// Handmatig kan nog steeds: php artisan ranking:capture of de admin-knop.
 
 // Laat de AI-bot elke dag om 12:00 nieuwe open wedstrijden voorspellen
 // (ná de sync, dus inclusief net-bekende knock-outteams).
